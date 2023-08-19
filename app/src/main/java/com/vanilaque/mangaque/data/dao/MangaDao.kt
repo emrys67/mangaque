@@ -1,0 +1,36 @@
+package com.vanilaque.mangaque.data.dao
+
+import androidx.room.*
+import com.vanilaque.mangaque.data.model.Manga
+import com.vanilaque.mangaque.data.model.MangaWithChapters
+import com.vanilaque.mangaque.util.MANGA_DATABASE_TABLE
+
+@Dao
+interface MangaDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(manga: Manga)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(manga: List<Manga>)
+
+    @Query("SELECT * FROM $MANGA_DATABASE_TABLE")
+    suspend fun getAll(): List<Manga>
+
+    @Query("SELECT * FROM $MANGA_DATABASE_TABLE WHERE id = :id LIMIT 1")
+    suspend fun getById(id: String): Manga
+
+    @Query("SELECT * FROM $MANGA_DATABASE_TABLE")
+    suspend fun getAllMangaWithChapters(): List<MangaWithChapters>
+
+    @Query("SELECT id FROM $MANGA_DATABASE_TABLE")
+    suspend fun getAllIds(): List<String>
+
+    @Query("SELECT * FROM $MANGA_DATABASE_TABLE WHERE id = :id")
+    suspend fun getMangaWithChapters(id: String): MangaWithChapters
+
+    @Query("DELETE FROM $MANGA_DATABASE_TABLE")
+    suspend fun clear()
+
+    @Delete
+    suspend fun delete(manga: Manga)
+}
