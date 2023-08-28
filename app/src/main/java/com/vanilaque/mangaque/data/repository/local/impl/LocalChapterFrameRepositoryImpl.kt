@@ -3,7 +3,7 @@ package com.vanilaque.mangareader.data.repository.local.impl
 import com.vanilaque.mangaque.data.db.MangaQueDatabase
 import com.vanilaque.mangaque.data.model.ChapterFrame
 import com.vanilaque.mangaque.data.model.ChapterWithFrames
-import com.vanilaque.mangareader.data.repository.local.LocalChapterFrameRepository
+import com.vanilaque.mangaque.data.repository.local.LocalChapterFrameRepository
 
 class LocalChapterFrameRepositoryImpl(database: MangaQueDatabase): LocalChapterFrameRepository {
     private val dao = database.chapterFrameDao()

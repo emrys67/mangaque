@@ -4,12 +4,14 @@ import android.content.Context
 import androidx.room.Room
 import com.vanilaque.mangaque.data.db.MangaQueDatabase
 import com.vanilaque.mangaque.util.MANGA_DATABASE
-import com.vanilaque.mangareader.data.repository.local.LocalChapterFrameRepository
-import com.vanilaque.mangareader.data.repository.local.LocalChapterRepository
-import com.vanilaque.mangareader.data.repository.local.LocalMangaRepository
+import com.vanilaque.mangaque.data.repository.local.LocalChapterFrameRepository
+import com.vanilaque.mangaque.data.repository.local.LocalChapterRepository
+import com.vanilaque.mangaque.data.repository.local.LocalMangaRepository
 import com.vanilaque.mangareader.data.repository.local.impl.LocalChapterFrameRepositoryImpl
 import com.vanilaque.mangareader.data.repository.local.impl.LocalChapterRepositoryImpl
-import com.vanilaque.mangareader.data.repository.local.impl.LocalMangaRepositoryImpl
+import com.vanilaque.mangaque.data.repository.local.impl.LocalMangaRepositoryImpl
+import com.vanilaque.mangareader.data.repository.MangaRepository
+import com.vanilaque.mangareader.data.repository.impl.MangaRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -55,7 +57,7 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideMangaRepository(
+    fun provideLocalMangaRepository(
         database: MangaQueDatabase
     ): LocalMangaRepository {
         return LocalMangaRepositoryImpl(

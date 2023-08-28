@@ -2,6 +2,9 @@ package com.vanilaque.mangareader.data.repository.impl
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.vanilaque.mangaque.api.MangaVerseApi
 import com.vanilaque.mangaque.data.model.Manga
 import com.vanilaque.mangaque.data.model.MangaWithChapters
@@ -9,10 +12,10 @@ import com.vanilaque.mangaque.util.MANGA_QUE_HOST
 import com.vanilaque.mangaque.util.MANGA_QUE_KEY
 import com.vanilaque.mangaque.util.toDbModel
 import com.vanilaque.mangareader.data.repository.MangaRepository
-import com.vanilaque.mangareader.data.repository.local.LocalMangaRepository
+import com.vanilaque.mangaque.data.repository.local.LocalMangaRepository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-@RequiresApi(Build.VERSION_CODES.O)
 class MangaRepositoryImpl @Inject constructor(
     private val api: MangaVerseApi,
     private val repo: LocalMangaRepository
@@ -25,8 +28,16 @@ class MangaRepositoryImpl @Inject constructor(
         repo.insert(manga)
     }
 
+    override suspend fun update(manga: Manga) {
+        repo.update(manga)
+    }
+
     override suspend fun getAll(): List<Manga> {
         return repo.getAll()
+    }
+
+    override fun getAllDataPaged(): Flow<PagingData<Manga>> {
+        return repo.getAllDataPaged()
     }
 
     override suspend fun get(id: String): Manga {
@@ -47,6 +58,10 @@ class MangaRepositoryImpl @Inject constructor(
 
     override suspend fun clear() {
         repo.clear()
+    }
+
+    override suspend fun clearTrash() {
+        repo.clearTrash()
     }
 
     override suspend fun delete(manga: Manga) {

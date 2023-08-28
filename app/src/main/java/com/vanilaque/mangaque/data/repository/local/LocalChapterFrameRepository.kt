@@ -1,4 +1,4 @@
-package com.vanilaque.mangareader.data.repository.local
+package com.vanilaque.mangaque.data.repository.local
 
 import com.vanilaque.mangaque.data.model.ChapterFrame
 import com.vanilaque.mangaque.data.model.ChapterWithFrames
