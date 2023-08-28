@@ -7,7 +7,7 @@ import com.vanilaque.mangaque.util.MANGA_QUE_HOST
 import com.vanilaque.mangaque.util.MANGA_QUE_KEY
 import com.vanilaque.mangaque.util.toDbModel
 import com.vanilaque.mangareader.data.repository.ChapterRepository
-import com.vanilaque.mangareader.data.repository.local.LocalChapterRepository
+import com.vanilaque.mangaque.data.repository.local.LocalChapterRepository
 import javax.inject.Inject
 
 class ChapterRepositoryImpl @Inject constructor(

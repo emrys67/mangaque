@@ -1,3 +1,10 @@
 <resources>
-    <string name="app_name">MangaQue</string>
+    <string name="app_name">Manga Reader</string>
+    <string name="downloaded">Downloaded</string>
+    <string name="favorites">Favorites</string>
+    <string name="description">Description</string>
+    <string name="chapters">Chapters</string>
+    <string name="newest">Newest</string>
+    <string name="previous">Previous</string>
+    <string name="top">Top</string>
 </resources>

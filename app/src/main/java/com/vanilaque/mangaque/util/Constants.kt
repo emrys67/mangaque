@@ -7,5 +7,11 @@ const val CHAPTER_DATABASE_TABLE = "chapter_table"
 const val MANGA_DATABASE_TABLE = "manga_table"
 const val MANGA_DATABASE = "mangaque_database"
 
-const val MANGA_QUE_KEY = ""
-const val MANGA_QUE_HOST = ""
+
+const val MANGA_QUE_HOST = "mangaverse-api.p.rapidapi.com"
+
+const val READ_TITLE_WEBTOON_ARGUMENT_KEY = "manga_id"
+const val READ_TITLE_CHAPTER_INDEX_ARGUMENT_KEY = "chapter_index"
+const val READ_TITLE_CHAPTER_ID_ARGUMENT_KEY = "chapter_id"
+
+const val TITLE_INFO_WEBTOON_ARGUMENT_KEY = "manga_id"

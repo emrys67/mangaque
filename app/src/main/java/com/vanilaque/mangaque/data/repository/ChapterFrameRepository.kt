@@ -8,7 +8,7 @@ interface ChapterFrameRepository {
 
     suspend fun insertAll(frames: List<ChapterFrame>)
 
-    suspend fun getFramesForChapter(chapterId: String): List<ChapterWithFrames>
+    suspend fun getFramesForChapter(chapterId: String): ChapterWithFrames
 
     suspend fun get(id: String): ChapterFrame
 

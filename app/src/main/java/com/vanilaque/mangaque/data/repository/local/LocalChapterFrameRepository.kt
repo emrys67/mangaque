@@ -1,4 +1,4 @@
-package com.vanilaque.mangareader.data.repository.local
+package com.vanilaque.mangaque.data.repository.local
 
 import com.vanilaque.mangaque.data.model.ChapterFrame
 import com.vanilaque.mangaque.data.model.ChapterWithFrames
@@ -8,7 +8,7 @@ interface LocalChapterFrameRepository {
 
     suspend fun insertAll(frames: List<ChapterFrame>)
 
-    suspend fun getFramesForChapter(chapterId: String): List<ChapterWithFrames>
+    suspend fun getFramesForChapter(chapterId: String): ChapterWithFrames
 
     suspend fun get(id: String): ChapterFrame
 

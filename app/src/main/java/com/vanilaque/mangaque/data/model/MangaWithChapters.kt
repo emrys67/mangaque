@@ -11,5 +11,5 @@ data class MangaWithChapters(
         entityColumn = "mangaId",
         entity = Chapter::class
     )
-    val chapters: List<Chapter>
+    val chapters: List<ChapterWithFrames>
 )

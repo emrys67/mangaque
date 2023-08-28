@@ -7,7 +7,7 @@ import com.vanilaque.mangaque.util.MANGA_QUE_HOST
 import com.vanilaque.mangaque.util.MANGA_QUE_KEY
 import com.vanilaque.mangaque.util.toDbModel
 import com.vanilaque.mangareader.data.repository.ChapterFrameRepository
-import com.vanilaque.mangareader.data.repository.local.LocalChapterFrameRepository
+import com.vanilaque.mangaque.data.repository.local.LocalChapterFrameRepository
 import javax.inject.Inject
 
 class ChapterFrameRepositoryImpl @Inject constructor(
@@ -22,7 +22,7 @@ class ChapterFrameRepositoryImpl @Inject constructor(
         repo.insertAll(frames)
     }
 
-    override suspend fun getFramesForChapter(chapterId: String): List<ChapterWithFrames> {
+    override suspend fun getFramesForChapter(chapterId: String): ChapterWithFrames {
         return repo.getFramesForChapter(chapterId)
     }
 

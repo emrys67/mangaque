@@ -16,7 +16,7 @@ interface ChapterFrameDao {
     suspend fun insertAll(frames: List<ChapterFrame>)
 
     @Query("SELECT * FROM $CHAPTER_DATABASE_TABLE WHERE id = :chapterId")
-    suspend fun getFramesForChapter(chapterId: String): List<ChapterWithFrames>
+    suspend fun getFramesForChapter(chapterId: String): ChapterWithFrames
 
     @Query("SELECT * FROM $CHAPTER_FRAME_DATABASE_TABLE WHERE id = :id LIMIT 1")
     suspend fun get(id: String): ChapterFrame

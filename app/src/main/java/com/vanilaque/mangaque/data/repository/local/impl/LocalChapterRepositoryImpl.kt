@@ -3,7 +3,7 @@ package com.vanilaque.mangareader.data.repository.local.impl
 import com.vanilaque.mangaque.data.db.MangaQueDatabase
 import com.vanilaque.mangaque.data.model.Chapter
 import com.vanilaque.mangaque.data.model.MangaWithChapters
-import com.vanilaque.mangareader.data.repository.local.LocalChapterRepository
+import com.vanilaque.mangaque.data.repository.local.LocalChapterRepository
 
 class LocalChapterRepositoryImpl(database: MangaQueDatabase) : LocalChapterRepository {
     private val dao = database.chapterDao()
