@@ -29,6 +29,7 @@ import javax.inject.Inject
 class TitleInfoViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val chapterRepository: ChapterRepository,
+    private val chapterFrameRepository: ChapterFrameRepository,
     private val mangaRepository: MangaRepository,
     private val mangaLocalStoreService: MangaLocalStoreService,
     private val chapterUseCase: ChapterUseCase,
@@ -53,14 +54,17 @@ class TitleInfoViewModel @Inject constructor(
             //download webtoon cover from storage/server
 
             initManga(mangaSlug)
+            coverBitmap.value =
+                mangaLocalStoreService.downloadMangaCoverFromServer(manga.value!!.manga.thumb)
             initChapters(mangaSlug)
-            coverBitmap.value = mangaLocalStoreService.downloadWebtoonCoverFromServer(manga.value!!.manga.thumb)
         }
     }
 
     fun getWebtoonFromLocalStorage(mangaItem: Manga) {
         viewModelScope.launch {
-            //mangaLocalStoreService.saveWebtoon(mangaItem, chapters.value)
+            chapterUseCase.syncChapters(mangaItem.id)
+            val mangaWithChapters = mangaRepository.getMangaWithChapters(mangaItem.id)
+            mangaLocalStoreService.saveManga(mangaWithChapters)
             downloadedChapters.value = mangaLocalStoreService.loadChapterImagesFromFile(
                 mangaRepository.getMangaWithChapters(mangaItem.id), 1
             )
@@ -73,14 +77,12 @@ class TitleInfoViewModel @Inject constructor(
     }
 
     private suspend fun initChapters(mangaId: String) {
-        if (areChaptersInDb(mangaId)) {
-            _chapters.value =
-                chapterRepository.getChaptersForManga(mangaId).chapters.map { it.chapter }
-        } else {
+        if (!areChaptersInDb(mangaId)) {
             chapterUseCase.syncChapters(mangaId)
-            _chapters.value =
-                chapterRepository.getChaptersForManga(mangaId).chapters.map { it.chapter }
         }
+
+        _chapters.value =
+            chapterRepository.getChaptersForManga(mangaId).chapters.map { it.chapter }
     }
 
     private suspend fun isMangaDownloaded(mangaId: String): Boolean {

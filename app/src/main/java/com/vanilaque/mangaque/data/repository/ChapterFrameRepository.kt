@@ -17,4 +17,5 @@ interface ChapterFrameRepository {
     suspend fun delete(frame: ChapterFrame)
 
     suspend fun fetchFromTheServer(chapterId: String): List<ChapterFrame>
+
 }

@@ -13,13 +13,13 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
-import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -37,7 +37,6 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.vanilaque.mangaque.R
 import com.vanilaque.mangaque.data.model.Chapter
-import com.vanilaque.mangaque.data.model.Manga
 import com.vanilaque.mangaque.data.model.MangaWithChapters
 import com.vanilaque.mangaque.presentation.components.ChooseBox
 import com.vanilaque.mangaque.presentation.components.ChooseBoxSize
@@ -92,6 +91,7 @@ fun TitleInfoScreen(navController: NavController, viewModel: TitleInfoViewModel 
             .then(
                 if (chosenBox == ChooseBox.DESCRIPTION) Modifier.verticalScroll(rememberScrollState()) else Modifier
             )
+            .padding(8.dp)
     ) {
 
         manga?.let {
@@ -99,6 +99,13 @@ fun TitleInfoScreen(navController: NavController, viewModel: TitleInfoViewModel 
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+                Text(
+                    text = it.manga.title,
+                    modifier = Modifier.weight(1f),
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
                 Image(
                     painter = painterResource(id = R.drawable.downloaded),
                     contentDescription = "download",
@@ -107,13 +114,7 @@ fun TitleInfoScreen(navController: NavController, viewModel: TitleInfoViewModel 
                         .size(48.dp)
                         .clickable { viewModel.getWebtoonFromLocalStorage(it.manga) }
                         .align(Alignment.Bottom)
-                )
-                Text(
-                    text = it.manga.title,
-                    modifier = Modifier.weight(1f),
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Start
+                        .padding(end = 16.dp)
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -136,7 +137,7 @@ fun TitleInfoScreen(navController: NavController, viewModel: TitleInfoViewModel 
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            coverBitmap?.let {
+            coverBitmap?.let {// TODO: if not saved -> use asynchImage + shimmereffect, else -> imagebitmap
                 Image(
                     bitmap = it.asImageBitmap(),
                     contentDescription = "image",
@@ -181,19 +182,33 @@ fun TitleInfoScreen(navController: NavController, viewModel: TitleInfoViewModel 
                     )
                 }
             } else {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(32.dp),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                ) {
-                    items(chapters) {
-                        ChapterItem(chapter = it, mangaItem = manga!!, navController)
+                if (chapters.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        CircularProgressIndicator(
+                            color = MangaPurple,
+                            modifier = Modifier
+                                .size(64.dp)
+                                .align(Center)
+                        )
                     }
-                    item {
-                        Spacer(modifier = Modifier.height(100.dp))
+                } else {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(3),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(32.dp),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        items(chapters) {
+                            ChapterItem(chapter = it, mangaItem = manga!!, navController)
+                        }
+                        item {
+                            Spacer(modifier = Modifier.height(100.dp))
+                        }
                     }
                 }
             }
@@ -268,7 +283,7 @@ fun navigateToChapter(
     navController.navigate(
         MangaScreens.TitleReadScreen.passArguments(
             mangaItem.manga.id,
-            mangaItem.chapters.map { it.chapter }.indexOf(chapter),
+            chapter.index,
             chapter.id
         )
     )

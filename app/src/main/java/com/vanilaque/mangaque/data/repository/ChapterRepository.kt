@@ -12,6 +12,8 @@ interface ChapterRepository {
 
     suspend fun get(id: String): Chapter
 
+    suspend fun getByIndex(index: Int, mangaId: String): Chapter
+
     suspend fun clear()
 
     suspend fun delete(chapter: Chapter)

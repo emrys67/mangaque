@@ -9,6 +9,7 @@ import androidx.paging.cachedIn
 import com.vanilaque.mangaque.data.model.Manga
 import com.vanilaque.mangaque.service.PrefManager
 import com.vanilaque.mangaque.service.StateManager
+import com.vanilaque.mangaque.usecase.MangaUseCase
 import com.vanilaque.mangareader.data.repository.impl.MangaRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -19,12 +20,12 @@ import javax.inject.Inject
 @HiltViewModel
 class ExploreViewModel @Inject constructor(
     private val mangaRepository: MangaRepositoryImpl,
+    private val mangaUseCase: MangaUseCase,
     private val prefManager: PrefManager
 ) : ViewModel() {
     val state = mutableStateOf<ViewModelState>(ViewModelState.DefaultState)
-    val manga: Flow<PagingData<Manga>> = mangaRepository.getAllDataPaged()
     val mangaPaged: Flow<PagingData<Manga>> =
-        mangaRepository.getAllDataPaged().cachedIn(viewModelScope)
+        mangaRepository.getAllPaged().cachedIn(viewModelScope)
     val hasCalledOnScrolledToEnd = mutableStateOf(false)
 
     init {
@@ -34,20 +35,17 @@ class ExploreViewModel @Inject constructor(
     fun fetchMangaFromTheServer() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-            Log.e("", "fetch more manga from server")
-            prefManager.mangaFeedPage = prefManager.mangaFeedPage + 1
-            val response =
-                mangaRepository.fetchFromTheServer(page = prefManager.mangaFeedPage.toString(), "")
-            mangaRepository.insert(response)
-            hasCalledOnScrolledToEnd.value = false
-            }
-            catch (exception: Exception){
+                Log.e("", "fetch more manga from server")
+                prefManager.mangaFeedPage = prefManager.mangaFeedPage + 1
+                mangaUseCase.syncManga()
+                hasCalledOnScrolledToEnd.value = false
+            } catch (exception: Exception) {
                 state.value = ViewModelState.ErrorState(exception)
             }
         }
     }
 
-    fun refreshManga(){
+    fun refreshManga() {
         viewModelScope.launch {
             prefManager.mangaFeedPage = 1
             fetchMangaFromTheServer()
@@ -56,12 +54,17 @@ class ExploreViewModel @Inject constructor(
 
     fun onLikeMangaClick(mangaItem: Manga, index: Int) {
         viewModelScope.launch {
-            mangaRepository.update(mangaItem.copy(isInFavorites = !mangaItem.isInFavorites))
+            mangaRepository.update(
+                mangaItem.copy(
+                    isInFavorites = !mangaItem.isInFavorites,
+                    addedToFavoritesAt = System.currentTimeMillis()
+                )
+            )
         }
     }
 
-    open class ViewModelState(){
-        object DefaultState: ViewModelState()
-        class ErrorState(val e: Exception): ViewModelState()
+    open class ViewModelState() {
+        object DefaultState : ViewModelState()
+        class ErrorState(val e: Exception) : ViewModelState()
     }
 }

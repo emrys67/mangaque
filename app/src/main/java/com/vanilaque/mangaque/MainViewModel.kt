@@ -9,6 +9,7 @@ import com.vanilaque.mangaque.presentation.components.FooterPath
 import com.vanilaque.mangaque.service.PrefManager
 import com.vanilaque.mangareader.data.repository.MangaRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -24,6 +25,7 @@ class MainViewModel @Inject constructor(
     val isSearchFieldFocused: MutableState<Boolean> = mutableStateOf(false)
     val footerPath: MutableState<FooterPath> = mutableStateOf(FooterPath.CATALOG)
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun onApplicationClose(){
         prefManager.beenAppCompletelyClosed = true
         prefManager.mangaFeedPage = 1

@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.vanilaque.mangaque.data.model.Manga
 import com.vanilaque.mangaque.presentation.components.ChooseBox
 import com.vanilaque.mangaque.presentation.components.ChooseBoxSize
@@ -25,7 +26,7 @@ import com.vanilaque.mangaque.theme.MangaPurple
 @Composable
 fun LibraryScreen(navController: NavController, viewModel: LibraryViewModel = hiltViewModel()) {
     val chosenBox by viewModel.chosenBox
-    val manga by viewModel.manga
+    val manga = viewModel.favoriteManga.collectAsLazyPagingItems()
     Column() {
         Spacer(modifier = Modifier.height(8.dp))
         //downloaded - favorites
@@ -42,11 +43,13 @@ fun LibraryScreen(navController: NavController, viewModel: LibraryViewModel = hi
         Spacer(modifier = Modifier.height(16.dp))
 
         LazyColumn(modifier = Modifier.fillMaxSize()) {
-            itemsIndexed(manga) { index, mangaItem ->
+            items(manga.itemCount) { index ->
+                manga[index]?.let {
                 LibraryMangaTitle(
-                    manga = mangaItem,
-                    { onLikeClick(viewModel, mangaItem, index) },
-                    { navigateToTitleInfo(navController, mangaItem.id) })
+                    manga = it,
+                    { onLikeClick(viewModel, it) },
+                    { navigateToTitleInfo(navController, it.id) })
+                }
             }
             item {
                 Spacer(modifier = Modifier.height(100.dp))
@@ -56,6 +59,6 @@ fun LibraryScreen(navController: NavController, viewModel: LibraryViewModel = hi
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun onLikeClick(viewModel: LibraryViewModel, manga: Manga, index: Int) {
-    viewModel.onLikeMangaClick(manga, index)
+fun onLikeClick(viewModel: LibraryViewModel, manga: Manga) {
+    viewModel.onLikeMangaClick(manga)
 }

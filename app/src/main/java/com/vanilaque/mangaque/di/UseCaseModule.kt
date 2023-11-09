@@ -1,8 +1,10 @@
 package com.vanilaque.mangaque.di
 
+import com.vanilaque.mangaque.service.MangaLocalStoreService
 import com.vanilaque.mangaque.usecase.MangaUseCase
 import com.vanilaque.mangaque.service.PrefManager
 import com.vanilaque.mangaque.usecase.ChapterUseCase
+import com.vanilaque.mangareader.data.repository.ChapterFrameRepository
 import com.vanilaque.mangareader.data.repository.ChapterRepository
 import com.vanilaque.mangareader.data.repository.MangaRepository
 import dagger.Module
@@ -15,13 +17,13 @@ import dagger.hilt.components.SingletonComponent
 object UseCaseModule {
 
     @Provides
-    fun provideMangaUseCase(prefManager: PrefManager, mangaRepository: MangaRepository): MangaUseCase {
-        return MangaUseCase(mangaRepository, prefManager)
+    fun provideMangaUseCase(prefManager: PrefManager, mangaRepository: MangaRepository, mangaLocalStoreService: MangaLocalStoreService): MangaUseCase {
+        return MangaUseCase(mangaRepository, prefManager, mangaLocalStoreService)
     }
 
     @Provides
-    fun provideChapterUseCase(prefManager: PrefManager, chapterRepository: ChapterRepository): ChapterUseCase{
-        return ChapterUseCase(chapterRepository, prefManager)
+    fun provideChapterUseCase(prefManager: PrefManager, chapterRepository: ChapterRepository, chapterFrameRepository: ChapterFrameRepository): ChapterUseCase{
+        return ChapterUseCase(chapterRepository, chapterFrameRepository, prefManager)
     }
 
 //    @Provides

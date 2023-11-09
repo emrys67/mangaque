@@ -20,6 +20,12 @@ interface MangaDao {
     @Query("SELECT * FROM $MANGA_DATABASE_TABLE")
     suspend fun getAll(): List<Manga>
 
+    @Query("SELECT * FROM $MANGA_DATABASE_TABLE WHERE isInFavorites = 1")
+    fun getAllFavorite() : PagingSource<Int, Manga>
+
+    @Query("SELECT * FROM $MANGA_DATABASE_TABLE WHERE downloaded = 1")
+    fun getAllSaved(): PagingSource<Int, Manga>
+
     @Query("SELECT * FROM $MANGA_DATABASE_TABLE")
     fun getAllDataPaged(): PagingSource<Int, Manga>
 

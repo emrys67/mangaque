@@ -9,6 +9,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.vanilaque.mangaque.presentation.components.screens.library.LibraryScreen
 import com.vanilaque.mangaque.presentation.components.screens.titleread.TitleReadScreen
 import com.vanilaque.mangaque.presentation.screens.main.ExploreScreen
 import com.vanilaque.mangaque.presentation.screens.titleinfo.TitleInfoScreen
@@ -47,9 +48,9 @@ fun MangaNavigation(navController: NavHostController) {
         )) {
             TitleInfoScreen(navController)
         }
-//
-//        composable(MangaScreens.LibraryScreen.route) {
-//            LibraryScreen(navController = navController)
-//        }
+
+        composable(MangaScreens.LibraryScreen.route) {
+            LibraryScreen(navController = navController)
+        }
     }
 }

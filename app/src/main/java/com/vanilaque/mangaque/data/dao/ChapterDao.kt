@@ -20,6 +20,9 @@ interface ChapterDao {
     @Query("SELECT * FROM $CHAPTER_DATABASE_TABLE WHERE id = :id LIMIT 1")
     suspend fun get(id: String): Chapter
 
+    @Query("SELECT * FROM $CHAPTER_DATABASE_TABLE WHERE `index` = :index AND mangaId = :mangaId LIMIT 1")
+    suspend fun getByOrder(index: Int, mangaId: String): Chapter
+
     @Query("DELETE FROM $CHAPTER_DATABASE_TABLE")
     suspend fun clear()
 

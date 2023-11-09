@@ -1,9 +1,12 @@
 package com.vanilaque.mangaque.presentation.components.screens.titleread
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vanilaque.mangaque.data.model.Chapter
 import com.vanilaque.mangaque.data.model.ChapterWithFrames
+import com.vanilaque.mangaque.data.model.Manga
 import com.vanilaque.mangaque.service.PrefManager
 import com.vanilaque.mangaque.util.READ_TITLE_CHAPTER_ID_ARGUMENT_KEY
 import com.vanilaque.mangaque.util.READ_TITLE_CHAPTER_INDEX_ARGUMENT_KEY
@@ -28,28 +31,35 @@ class TitleReadViewModel @Inject constructor(
     val prefManager: PrefManager
 ) : ViewModel() {
 
-    val _chapter: MutableStateFlow<ChapterWithFrames?> = MutableStateFlow(null)
-    val chapter: StateFlow<ChapterWithFrames?> = _chapter
+    val _chapterWithFrames: MutableStateFlow<ChapterWithFrames?> = MutableStateFlow(null)
+    val chapterWithFrames: StateFlow<ChapterWithFrames?> = _chapterWithFrames
     var chapterIndex: Int = 0
     lateinit var mangaId: String
     lateinit var chapterId: String
+    lateinit var chapter: Chapter
+    private lateinit var manga: Manga
     init {
 
         viewModelScope.launch(Dispatchers.IO) {
             mangaId = savedStateHandle.get<String>(READ_TITLE_WEBTOON_ARGUMENT_KEY)!!
             chapterIndex = savedStateHandle.get<Int>(READ_TITLE_CHAPTER_INDEX_ARGUMENT_KEY)!!
             chapterId = savedStateHandle.get<String>(READ_TITLE_CHAPTER_ID_ARGUMENT_KEY)!!
-            fetchChapterImages(chapterId)
+            fetchChapterImages(chapterIndex, mangaId)
+
+            manga = mangaRepository.get(mangaId)
+            mangaRepository.update(manga.copy(lastChapterRead = chapterIndex, lastOpenedAt = System.currentTimeMillis(),))
 
 
-            chapterId.let {
-                _chapter.value = framesRepository.getFramesForChapter(it)
+            chapter.let { // TODO:
+                _chapterWithFrames.value = framesRepository.getFramesForChapter(it.id)
             }
         }
     }
 
-    suspend fun fetchChapterImages(chapterId: String){
-        val imgs = chapterFrameRepository.fetchFromTheServer(chapterId)
+    suspend fun fetchChapterImages(chapterIndex: Int, mangaId: String){
+        Log.e("chapterRepository.getByIndex", "chapterIndex: $chapterIndex, mangaId: $mangaId")
+        chapter = chapterRepository.getByIndex(chapterIndex, mangaId)
+        val imgs = chapterFrameRepository.fetchFromTheServer(chapter.id)
         framesRepository.insertAll(imgs)
     }
 

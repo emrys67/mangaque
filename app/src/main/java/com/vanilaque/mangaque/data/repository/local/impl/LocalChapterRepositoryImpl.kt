@@ -23,6 +23,10 @@ class LocalChapterRepositoryImpl(database: MangaQueDatabase) : LocalChapterRepos
         return dao.get(id)
     }
 
+    override suspend fun getByIndex(index: Int, mangaId: String): Chapter {
+        return dao.getByOrder(index, mangaId)
+    }
+
     override suspend fun clear() {
         dao.clear()
     }

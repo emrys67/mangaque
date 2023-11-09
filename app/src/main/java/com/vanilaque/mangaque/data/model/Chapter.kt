@@ -18,6 +18,7 @@ data class Chapter(
     @PrimaryKey
     val id: String,
     val mangaId: String,
+    var index: Int,
     val title: String,
     val createdAt: Long?,
     val updatedAt: Long?,

@@ -2,7 +2,14 @@ package com.vanilaque.mangaque.presentation.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
@@ -18,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vanilaque.mangaque.R
 import com.vanilaque.mangaque.data.model.Manga
-import com.vanilaque.mangaque.data.model.MangaWithChapters
 import com.vanilaque.mangaque.theme.MangaPurple
+import com.vanilaque.mangaque.util.millisToDateString
 
 @Composable
 fun LibraryMangaTitle(
@@ -27,7 +34,6 @@ fun LibraryMangaTitle(
     onLikeClick: () -> Unit,
     onReadClick: () -> Unit
 ) {
-
     Row(
         modifier = Modifier
             .height(IMAGE_HEIGHT_MEDIUM.dp)
@@ -95,19 +101,21 @@ fun LibraryMangaTitle(
                     )
                 }
 
-                Text(
-                    text = "21.11.2022 14:11 last opening",
-                    fontSize = 12.sp,
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 8.dp),
-                    color = Color.Gray
-                )
-
-                if (manga.isInFavorites) {
+                manga.lastOpenedAt?.let {
                     Text(
-                        text = "21.11.2022 14:11 was added",
+                        text = "${millisToDateString(it)} last opened",
+                        fontSize = 12.sp,
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 8.dp),
+                        color = Color.Gray
+                    )
+                }
+
+                manga.addedToFavoritesAt?.let {
+                    Text(
+                        text = "${millisToDateString(it)} was added",
                         fontSize = 12.sp,
                         textAlign = TextAlign.Start,
                         modifier = Modifier

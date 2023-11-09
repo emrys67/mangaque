@@ -27,7 +27,21 @@ class LocalMangaRepositoryImpl(database: MangaQueDatabase) : LocalMangaRepositor
         return dao.getAll()
     }
 
-    override fun getAllDataPaged(): Flow<PagingData<Manga>> {
+    override fun getAllFavoritePaged(): Flow<PagingData<Manga>> {
+        return Pager(
+            config = PagingConfig(pageSize = 10),
+            pagingSourceFactory = { dao.getAllFavorite() }
+        ).flow
+    }
+
+    override fun getAllSavedPaged(): Flow<PagingData<Manga>> {
+        return Pager(
+            config = PagingConfig(pageSize = 10),
+            pagingSourceFactory = { dao.getAllSaved() }
+        ).flow
+    }
+
+    override fun getAllPaged(): Flow<PagingData<Manga>> {
         return Pager(
             config = PagingConfig(pageSize = 10),
             pagingSourceFactory = { dao.getAllDataPaged() }

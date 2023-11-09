@@ -14,7 +14,11 @@ interface MangaRepository {
 
     suspend fun getAll(): List<Manga>
 
-    fun getAllDataPaged(): Flow<PagingData<Manga>>
+    fun getAllFavoritePaged(): Flow<PagingData<Manga>>
+
+    fun getAllSavedPaged(): Flow<PagingData<Manga>>
+
+    fun getAllPaged(): Flow<PagingData<Manga>>
 
     suspend fun get(id: String): Manga
 

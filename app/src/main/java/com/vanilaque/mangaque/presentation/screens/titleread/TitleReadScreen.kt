@@ -10,13 +10,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
@@ -25,9 +22,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,10 +35,11 @@ import coil.request.ImageRequest
 import com.vanilaque.mangaque.presentation.navigation.MangaScreens
 import com.vanilaque.mangaque.service.StateManager
 import com.vanilaque.mangaque.theme.MangaPurple
+import com.vanilaque.mangaque.theme.Purple200
 
 @Composable
 fun TitleReadScreen(navController: NavController, viewModel: TitleReadViewModel = hiltViewModel()) {
-    val chapter by viewModel.chapter.collectAsState()
+    val chapter by viewModel.chapterWithFrames.collectAsState()
 
     BackHandler {
         navController.navigate(MangaScreens.TitleInfoScreen.passArg(viewModel.mangaId))
@@ -75,6 +74,7 @@ fun TitleReadScreen(navController: NavController, viewModel: TitleReadViewModel 
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .wrapContentHeight()
+                                    .padding(vertical = 64.dp)
                             ) {
                                 CircularProgressIndicator(
                                     color = MangaPurple,
@@ -96,45 +96,52 @@ fun TitleReadScreen(navController: NavController, viewModel: TitleReadViewModel 
             Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-                .padding(8.dp)
+                .padding(horizontal = 16.dp, vertical = 32.dp)
         ) {
-            Button(
-                modifier = Modifier.weight(1f),
-                onClick = {
-                    onPrevClick(
-                        navController = navController,
-                        viewModel = viewModel
-                    )
-                },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.LightGray)
+            ClickableText(
+                text = AnnotatedString("Prev"), style = TextStyle(
+                    fontSize = 20.sp,
+                    color = Purple200
+                )
             ) {
-                Text(
-                    text = "Prev",
-                    modifier = Modifier.wrapContentSize(),
-                    fontSize = 14.sp,
-                    color = Color.White
+                onPrevClick(
+                    navController = navController,
+                    viewModel = viewModel
                 )
             }
 
-            Spacer(modifier = Modifier.weight(2f))
 
-            Button(
-                modifier = Modifier.weight(1f),
-                onClick = {
-                    onNextClick(
-                        navController = navController,
-                        viewModel = viewModel
-                    )
-                },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.LightGray)
+            Spacer(modifier = Modifier.weight(1f))
+
+            ClickableText(
+                text = AnnotatedString("Next"), style = TextStyle(
+                    fontSize = 20.sp,
+                    color = Purple200
+                )
             ) {
-                Text(
-                    text = "Next",
-                    modifier = Modifier.wrapContentSize(),
-                    fontSize = 14.sp,
-                    color = Color.White
+                onNextClick(
+                    navController = navController,
+                    viewModel = viewModel
                 )
             }
+
+//            Button(
+//                modifier = Modifier.weight(1f),
+//                onClick = {
+//                    onNextClick(
+//                        navController = navController,
+//                        viewModel = viewModel
+//                    )
+//                },
+//                colors = ButtonDefaults.buttonColors(backgroundColor = Color.LightGray)
+//            ) {
+//                Text(
+//                    text = "Next",
+//                    modifier = Modifier.wrapContentSize(),
+//                    fontSize = 14.sp,
+//                    color = Color.White
+//                )
+//            }
         }
     }
 }
@@ -144,7 +151,7 @@ fun onNextClick(navController: NavController, viewModel: TitleReadViewModel) { /
         MangaScreens.TitleReadScreen.passArguments(
             viewModel.mangaId,
             viewModel.chapterIndex + 1,
-            viewModel.chapter.value!!.chapter.id
+            viewModel.chapterWithFrames.value!!.chapter.id
         )
     )
 }
@@ -154,7 +161,7 @@ fun onPrevClick(navController: NavController, viewModel: TitleReadViewModel) { /
         MangaScreens.TitleReadScreen.passArguments(
             viewModel.mangaId,
             viewModel.chapterIndex - 1,
-            viewModel.chapter.value!!.chapter.id
+            viewModel.chapterWithFrames.value!!.chapter.id
         )
     )
 }

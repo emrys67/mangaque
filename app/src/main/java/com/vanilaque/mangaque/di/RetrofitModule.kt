@@ -62,4 +62,22 @@ object RetrofitModule {
     fun provideMangaVerseApi(retrofit: Retrofit): MangaVerseApi {
         return retrofit.create(MangaVerseApi::class.java)
     }
+
+//    @Provides
+//    @Singleton
+//    fun provideMangaRepository(
+//        api: MangaVerseApi,
+//        localRepo: LocalMangaRepository
+//    ): MangaRepository {
+//        return MangaRepositoryImpl(api, localRepo)
+//    }
+
+//    @Provides
+//    @Singleton
+//    fun provideChaptersRepository(
+//        api: MangaVerseApi,
+//        localRepo: LocalChapterRepository
+//    ): ChapterRepository {
+//        return ChapterRepositoryImpl(localRepo, api)
+//    }
 }

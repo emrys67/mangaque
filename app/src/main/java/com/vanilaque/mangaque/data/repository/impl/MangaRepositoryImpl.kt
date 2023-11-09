@@ -1,9 +1,5 @@
 package com.vanilaque.mangareader.data.repository.impl
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.vanilaque.mangaque.api.MangaVerseApi
 import com.vanilaque.mangaque.data.model.Manga
@@ -36,8 +32,17 @@ class MangaRepositoryImpl @Inject constructor(
         return repo.getAll()
     }
 
-    override fun getAllDataPaged(): Flow<PagingData<Manga>> {
-        return repo.getAllDataPaged()
+    override fun getAllFavoritePaged(): Flow<PagingData<Manga>> {
+        return repo.getAllFavoritePaged()
+    }
+
+    override fun getAllSavedPaged(): Flow<PagingData<Manga>> {
+        return repo.getAllSavedPaged()
+    }
+
+
+    override fun getAllPaged(): Flow<PagingData<Manga>> {
+        return repo.getAllPaged()
     }
 
     override suspend fun get(id: String): Manga {

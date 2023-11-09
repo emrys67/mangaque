@@ -30,6 +30,10 @@ class ChapterRepositoryImpl @Inject constructor(
         return repo.get(id)
     }
 
+    override suspend fun getByIndex(index: Int, mangaId: String): Chapter {
+        return repo.getByIndex(index, mangaId)
+    }
+
     override suspend fun clear() {
         repo.clear()
     }
