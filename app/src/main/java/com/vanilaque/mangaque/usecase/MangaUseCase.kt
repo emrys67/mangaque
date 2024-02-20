@@ -1,15 +1,12 @@
 package com.vanilaque.mangaque.usecase
 
-import com.vanilaque.mangaque.data.model.MangaWithChapters
-import com.vanilaque.mangaque.service.MangaLocalStoreService
+import com.vanilaque.mangaque.data.repository.MangaRepository
 import com.vanilaque.mangaque.service.PrefManager
-import com.vanilaque.mangareader.data.repository.MangaRepository
 import javax.inject.Inject
 
 class MangaUseCase @Inject constructor(
     private val repository: MangaRepository,
-    private val prefManager: PrefManager,
-    private val mangaLocalStoreService: MangaLocalStoreService
+    private val prefManager: PrefManager
 ) {
 
     suspend fun syncManga() {
@@ -17,11 +14,9 @@ class MangaUseCase @Inject constructor(
         repository.insert(manga)
     }
 
-    suspend fun saveMangaToLocalStorage(mangaWithChapters: MangaWithChapters){
-        mangaLocalStoreService.saveManga(mangaWithChapters)
-    }
-
-    suspend fun fetchMangaFromLocalStorage(mangaWithChapters: MangaWithChapters){
-
+    suspend fun clearTrash() {
+        prefManager.beenAppCompletelyClosed = true
+        prefManager.mangaFeedPage = 1
+        repository.clearTrash()
     }
 }

@@ -1,6 +1,5 @@
 package com.vanilaque.mangaque.presentation.screens.main
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -10,6 +9,7 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -17,6 +17,7 @@ import androidx.navigation.NavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.vanilaque.mangaque.data.model.Manga
 import com.vanilaque.mangaque.presentation.components.EmptyScreen
+import com.vanilaque.mangaque.presentation.components.FooterPath
 import com.vanilaque.mangaque.presentation.components.SmallTitle
 import com.vanilaque.mangaque.presentation.navigation.MangaScreens
 import com.vanilaque.mangaque.service.StateManager
@@ -32,13 +33,11 @@ fun ExploreScreen(
     val listState = rememberLazyGridState()
     val lastVisibleItemIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
     val hasCalledOnScrolledToEnd by viewModel.hasCalledOnScrolledToEnd
-    var isRefreshing by remember { mutableStateOf(false) }
     val refreshState = rememberPullRefreshState(
-        refreshing = isRefreshing,
+        refreshing = viewModelState is ExploreViewModel.ViewModelState.RefreshingState,
         onRefresh = {
-            isRefreshing = true
+            viewModel.state.value = ExploreViewModel.ViewModelState.RefreshingState
             viewModel.refreshManga()
-            isRefreshing = false
         }
     )
     if (lastVisibleItemIndex >= mangaPaged.itemCount - 1 && !hasCalledOnScrolledToEnd) {
@@ -46,59 +45,62 @@ fun ExploreScreen(
         viewModel.fetchMangaFromTheServer()
     }
 
-    BackHandler {
-
-    }
-
     DisposableEffect(Unit) {
         StateManager.setShowBottomTopBars(true)
+        StateManager.setFooterPath(FooterPath.CATALOG)
         onDispose {}
     }
 
     if (viewModelState is ExploreViewModel.ViewModelState.ErrorState) {
         EmptyScreen((viewModelState as ExploreViewModel.ViewModelState.ErrorState).e)
     } else {
-        PullRefreshIndicator(
-            state = refreshState,
-            refreshing = isRefreshing
-        )
-        Column(modifier = Modifier.fillMaxSize()) {
-            LazyVerticalGrid(
-                state = listState,
-                columns = GridCells.Fixed(3),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(32.dp),
-                modifier = Modifier
-                    .padding(
-                        horizontal = 16.dp,
-                        vertical = 8.dp
-                    )
-                    .pullRefresh(refreshState)
-            ) {
-                items(mangaPaged.itemCount) { mangaItem ->
-                    mangaPaged.get(mangaItem)?.let {
-                        SmallTitle(
-                            manga = it, // TODO: show only if mangaitem != null
-                            onClick = {
-                                navigateToTitleInfo(
-                                    navController,
-                                    it.id
-                                )
-                            },
-                            onLikeClick = {
-                                onLikeClick(
-                                    viewModel,
-                                    mangaPaged[mangaItem]!!,
-                                    mangaItem
-                                )
-                            }
+        Box {
+            Column(modifier = Modifier.fillMaxSize()) {
+                LazyVerticalGrid(
+                    state = listState,
+                    columns = GridCells.Fixed(3),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(32.dp),
+                    modifier = Modifier
+                        .padding(
+                            horizontal = 16.dp,
+                            vertical = 8.dp
                         )
+                        .pullRefresh(refreshState)
+                ) {
+                    items(mangaPaged.itemCount) { mangaItem ->
+                        mangaPaged.get(mangaItem)?.let {
+                            SmallTitle(
+                                manga = it, // TODO: show only if mangaitem != null
+                                onClick = {
+                                    navigateToTitleInfo(
+                                        navController,
+                                        it.id
+                                    )
+                                },
+                                onLikeClick = {
+                                    onLikeClick(
+                                        viewModel,
+                                        mangaPaged[mangaItem]!!,
+                                        mangaItem
+                                    )
+                                }
+                            )
+                        }
+                    }
+                    item {
+                        Spacer(modifier = Modifier.height(400.dp))
                     }
                 }
-                item {
-                    Spacer(modifier = Modifier.height(400.dp))
-                }
             }
+            PullRefreshIndicator(
+                state = refreshState,
+                refreshing = viewModelState is ExploreViewModel.ViewModelState.RefreshingState,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(bottom = 64.dp)
+                    .size(64.dp)
+            )
         }
     }
 }

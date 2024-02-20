@@ -3,7 +3,6 @@
 package com.vanilaque.mangaque.presentation.screens.titleinfo
 
 import android.Manifest
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -37,10 +36,12 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.vanilaque.mangaque.R
 import com.vanilaque.mangaque.data.model.Chapter
+import com.vanilaque.mangaque.data.model.Manga
 import com.vanilaque.mangaque.data.model.MangaWithChapters
 import com.vanilaque.mangaque.presentation.components.ChooseBox
 import com.vanilaque.mangaque.presentation.components.ChooseBoxSize
 import com.vanilaque.mangaque.presentation.components.HorizontalRadioGroup
+import com.vanilaque.mangaque.presentation.components.MangaSaveInProgressDialog
 import com.vanilaque.mangaque.presentation.navigation.MangaScreens
 import com.vanilaque.mangaque.service.StateManager
 import com.vanilaque.mangaque.theme.MangaPink
@@ -62,20 +63,10 @@ fun TitleInfoScreen(navController: NavController, viewModel: TitleInfoViewModel 
         )
     )
 
-    BackHandler {
-        navController.navigate(MangaScreens.MainScreen.route)
-    }
-
     LaunchedEffect(state) {
         if (state == TitleInfoViewModel.ViewModelState.RequirePermissionsState) {
             permissionsState.launchMultiplePermissionRequest()
             viewModel.state.value = TitleInfoViewModel.ViewModelState.DefaultState
-        }
-    }
-
-    LaunchedEffect(manga) {
-        manga?.let {
-            //    viewModel.initCoverImage(it.mangaSlug)
         }
     }
 
@@ -85,129 +76,150 @@ fun TitleInfoScreen(navController: NavController, viewModel: TitleInfoViewModel 
         }
     }
 
-    Column(
-        Modifier
-            .fillMaxSize()
-            .then(
-                if (chosenBox == ChooseBox.DESCRIPTION) Modifier.verticalScroll(rememberScrollState()) else Modifier
-            )
-            .padding(8.dp)
-    ) {
+    DisposableEffect(Unit) {
+        navController.backQueue.removeAll { it.destination.route == MangaScreens.TitleReadScreen.route }
+        onDispose {}
+    }
 
-        manga?.let {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Text(
-                    text = it.manga.title,
-                    modifier = Modifier.weight(1f),
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
+    Box {
+        MangaSaveInProgressDialog(
+            state = state,
+            onClose = { viewModel.state.value = TitleInfoViewModel.ViewModelState.DefaultState })
+        Column(
+            Modifier
+                .fillMaxSize()
+                .then(
+                    if (chosenBox == ChooseBox.DESCRIPTION) Modifier.verticalScroll(
+                        rememberScrollState()
+                    ) else Modifier
                 )
-                Image(
-                    painter = painterResource(id = R.drawable.downloaded),
-                    contentDescription = "download",
-                    colorFilter = ColorFilter.tint(MangaPurple),
+                .padding(8.dp)
+        ) {
+
+            manga?.let {
+                Row(
                     modifier = Modifier
-                        .size(48.dp)
-                        .clickable { viewModel.getWebtoonFromLocalStorage(it.manga) }
-                        .align(Alignment.Bottom)
-                        .padding(end = 16.dp)
-                )
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        manga?.let {
-            LazyRow(
-                modifier = Modifier
-                    .height(24.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                it.manga.genres.let { genres ->
-                    items(genres) { genre ->
-                        GenreBox(name = genre)
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            coverBitmap?.let {// TODO: if not saved -> use asynchImage + shimmereffect, else -> imagebitmap
-                Image(
-                    bitmap = it.asImageBitmap(),
-                    contentDescription = "image",
-                    modifier = Modifier
-                        .height(200.dp)
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(8.dp)),
-                    contentScale = ContentScale.Crop,
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            HorizontalRadioGroup(
-                options = listOf(ChooseBox.DESCRIPTION, ChooseBox.CHAPTERS),
-                selected = chosenBox,
-                onClick = { viewModel.chosenBox.value = it },
-                boxSize = ChooseBoxSize.BIG,
-                selectedColor = MangaPurple,
-                notSelectedColor = MangaPink,
-                modifier = Modifier.align(CenterHorizontally)
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            if (chosenBox == ChooseBox.DESCRIPTION) {
-                Card(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(8.dp),
-                    shape = RoundedCornerShape(8.dp), backgroundColor = Color.White,
-                    elevation = 6.dp,
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
+                        text = it.manga.title,
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(vertical = 16.dp, horizontal = 8.dp),
-                        text = manga!!.manga.summary,
-                        textAlign = TextAlign.Start,
-                        fontSize = 18.sp,
-                        color = Color.Black
+                            .weight(1f),
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Start
+                    )
+                    Image(
+                        painter = painterResource(id = R.drawable.downloaded),
+                        contentDescription = "download",
+                        colorFilter = ColorFilter.tint(Color.LightGray),
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clickable {
+                                onDownloadClick(
+                                    viewModel,
+                                    it.manga,
+                                    permissionsState.allPermissionsGranted
+                                )
+                            }
+                            .align(Alignment.Bottom)
+                            .padding(end = 16.dp)
                     )
                 }
-            } else {
-                if (chapters.isEmpty()) {
-                    Box(
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            manga?.let {
+                LazyRow(
+                    modifier = Modifier
+                        .height(24.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    it.manga.genres.let { genres ->
+                        items(genres) { genre ->
+                            GenreBox(name = genre)
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                coverBitmap?.let {
+                    Image(
+                        bitmap = it.asImageBitmap(),
+                        contentDescription = "image",
                         modifier = Modifier
-                            .fillMaxSize()
+                            .height(200.dp)
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(8.dp)),
+                        contentScale = ContentScale.Crop,
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                HorizontalRadioGroup(
+                    options = listOf(ChooseBox.DESCRIPTION, ChooseBox.CHAPTERS),
+                    selected = chosenBox,
+                    onClick = { viewModel.chosenBox.value = it },
+                    boxSize = ChooseBoxSize.BIG,
+                    selectedColor = MangaPurple,
+                    notSelectedColor = MangaPink,
+                    modifier = Modifier.align(CenterHorizontally)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                if (chosenBox == ChooseBox.DESCRIPTION) {
+                    Card(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(8.dp),
+                        shape = RoundedCornerShape(8.dp), backgroundColor = Color.White,
+                        elevation = 6.dp,
                     ) {
-                        CircularProgressIndicator(
-                            color = MangaPurple,
+                        Text(
                             modifier = Modifier
-                                .size(64.dp)
-                                .align(Center)
+                                .fillMaxSize()
+                                .padding(vertical = 16.dp, horizontal = 8.dp),
+                            text = manga!!.manga.summary,
+                            textAlign = TextAlign.Start,
+                            fontSize = 18.sp,
+                            color = Color.Black
                         )
                     }
                 } else {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(3),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(32.dp),
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                    ) {
-                        items(chapters) {
-                            ChapterItem(chapter = it, mangaItem = manga!!, navController)
+                    if (chapters.isEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                        ) {
+                            CircularProgressIndicator(
+                                color = MangaPurple,
+                                modifier = Modifier
+                                    .size(64.dp)
+                                    .align(Center)
+                            )
                         }
-                        item {
-                            Spacer(modifier = Modifier.height(100.dp))
+                    } else {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(3),
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(32.dp),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        ) {
+                            items(chapters) {
+                                ChapterItem(chapter = it, mangaItem = manga!!, navController)
+                            }
+                            item {
+                                Spacer(modifier = Modifier.height(100.dp))
+                            }
                         }
                     }
                 }
@@ -225,7 +237,7 @@ fun GenreBox(name: String) {
             .clip(RoundedCornerShape(4.dp))
             .background(color = Color.LightGray)
             .padding(horizontal = 4.dp),
-        contentAlignment = Alignment.Center
+        contentAlignment = Center
     ) {
         Text(
             text = name,
@@ -246,14 +258,7 @@ fun ChapterItem(chapter: Chapter, mangaItem: MangaWithChapters, navController: N
         shape = RoundedCornerShape(8.dp),
         elevation = 8.dp,
         onClick = {
-
             navigateToChapter(navController, mangaItem = mangaItem, chapter = chapter)
-//            navController.navigate(
-//                MangaScreens.TitleReadScreen.passArguments(
-//                    webtoon.mangaSlug,
-//                    chapter.chapterSlug
-//                )
-//            )
         }) {
         Box(Modifier.fillMaxSize()) {
             Text(
@@ -267,9 +272,9 @@ fun ChapterItem(chapter: Chapter, mangaItem: MangaWithChapters, navController: N
     }
 }
 
-fun onDownloadClick(viewModel: TitleInfoViewModel, permissionsGranted: Boolean) {
+fun onDownloadClick(viewModel: TitleInfoViewModel, manga: Manga, permissionsGranted: Boolean) {
     if (permissionsGranted) {
-        viewModel.getWebtoonFromLocalStorage(viewModel.manga.value!!.manga)
+        viewModel.saveMangaInLocalStorage(manga)
     } else {
         viewModel.state.value = TitleInfoViewModel.ViewModelState.RequirePermissionsState
     }

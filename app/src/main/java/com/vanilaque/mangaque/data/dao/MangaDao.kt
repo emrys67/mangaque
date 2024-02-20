@@ -8,10 +8,10 @@ import com.vanilaque.mangaque.util.MANGA_DATABASE_TABLE
 
 @Dao
 interface MangaDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(manga: Manga)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(manga: List<Manga>)
 
     @Update

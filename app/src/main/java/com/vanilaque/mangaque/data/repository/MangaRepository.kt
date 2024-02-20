@@ -1,4 +1,4 @@
-package com.vanilaque.mangareader.data.repository
+package com.vanilaque.mangaque.data.repository
 
 import androidx.paging.PagingData
 import com.vanilaque.mangaque.data.model.Manga

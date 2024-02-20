@@ -3,13 +3,7 @@ package com.vanilaque.mangaque.di
 import androidx.paging.ExperimentalPagingApi
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.vanilaque.mangaque.api.MangaVerseApi
-import com.vanilaque.mangaque.data.repository.local.LocalChapterRepository
-import com.vanilaque.mangaque.data.repository.local.LocalMangaRepository
 import com.vanilaque.mangaque.util.BASE_URL
-import com.vanilaque.mangareader.data.repository.ChapterRepository
-import com.vanilaque.mangareader.data.repository.MangaRepository
-import com.vanilaque.mangareader.data.repository.impl.ChapterRepositoryImpl
-import com.vanilaque.mangareader.data.repository.impl.MangaRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

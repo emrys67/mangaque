@@ -1,12 +1,11 @@
 package com.vanilaque.mangaque.di
 
-import com.vanilaque.mangaque.service.MangaLocalStoreService
-import com.vanilaque.mangaque.usecase.MangaUseCase
+import com.vanilaque.mangaque.data.repository.ChapterFrameRepository
+import com.vanilaque.mangaque.data.repository.ChapterRepository
+import com.vanilaque.mangaque.data.repository.MangaRepository
 import com.vanilaque.mangaque.service.PrefManager
 import com.vanilaque.mangaque.usecase.ChapterUseCase
-import com.vanilaque.mangareader.data.repository.ChapterFrameRepository
-import com.vanilaque.mangareader.data.repository.ChapterRepository
-import com.vanilaque.mangareader.data.repository.MangaRepository
+import com.vanilaque.mangaque.usecase.MangaUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,17 +16,18 @@ import dagger.hilt.components.SingletonComponent
 object UseCaseModule {
 
     @Provides
-    fun provideMangaUseCase(prefManager: PrefManager, mangaRepository: MangaRepository, mangaLocalStoreService: MangaLocalStoreService): MangaUseCase {
-        return MangaUseCase(mangaRepository, prefManager, mangaLocalStoreService)
+    fun provideMangaUseCase(
+        prefManager: PrefManager,
+        mangaRepository: MangaRepository
+    ): MangaUseCase {
+        return MangaUseCase(mangaRepository, prefManager)
     }
 
     @Provides
-    fun provideChapterUseCase(prefManager: PrefManager, chapterRepository: ChapterRepository, chapterFrameRepository: ChapterFrameRepository): ChapterUseCase{
-        return ChapterUseCase(chapterRepository, chapterFrameRepository, prefManager)
+    fun provideChapterUseCase(
+        chapterRepository: ChapterRepository,
+        chapterFrameRepository: ChapterFrameRepository
+    ): ChapterUseCase {
+        return ChapterUseCase(chapterRepository, chapterFrameRepository)
     }
-
-//    @Provides
-//    fun provideMangaLocalStoreService(@ApplicationContext context: Context): MangaLocalStoreService {
-//        return MangaLocalStoreService(context)
-//    }
 }

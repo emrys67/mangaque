@@ -61,44 +61,50 @@ fun LibraryMangaTitle(
                     fontWeight = FontWeight.SemiBold
                 )
 
-                Row() {
-                    Image(
-                        painter = painterResource(id = R.drawable.downloaded),
-                        contentDescription = "downloaded",
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .size(24.dp)
-                            .align(Alignment.CenterVertically),
-                        colorFilter = ColorFilter.tint(color = Color.Black)
-                    )
-                    Text(
-                        text = "15 chapters",
-                        fontSize = 16.sp,
-                        textAlign = TextAlign.Start,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.CenterVertically)
-                            .padding(start = 8.dp)
-                    )
+                if (manga.chaptersDownloaded > 0) {
+                    Row() {
+                        Image(
+                            painter = painterResource(id = R.drawable.downloaded),
+                            contentDescription = "downloaded",
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .size(24.dp)
+                                .align(Alignment.CenterVertically),
+                            colorFilter = ColorFilter.tint(color = Color.Black)
+                        )
+                        Text(
+                            text = "${manga.chaptersDownloaded}  chapters",
+                            fontSize = 16.sp,
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.CenterVertically)
+                                .padding(start = 8.dp)
+                        )
+                    }
                 }
 
-                Row() {
-                    Image(
-                        painter = painterResource(id = R.drawable.eye),
-                        contentDescription = "downloaded",
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .size(24.dp)
-                            .align(Alignment.CenterVertically),
-                        colorFilter = ColorFilter.tint(color = Color.Black)
-                    )
-                    Text(
-                        text = "11 chapters", fontSize = 16.sp, textAlign = TextAlign.Start,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 8.dp)
-                            .align(Alignment.CenterVertically)
-                    )
+                if (manga.lastChapterRead > 0) {
+                    Row() {
+                        Image(
+                            painter = painterResource(id = R.drawable.eye),
+                            contentDescription = "seen",
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .size(24.dp)
+                                .align(Alignment.CenterVertically),
+                            colorFilter = ColorFilter.tint(color = Color.Black)
+                        )
+                        Text(
+                            text = "${manga.lastChapterRead} chapters",
+                            fontSize = 16.sp,
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 8.dp)
+                                .align(Alignment.CenterVertically)
+                        )
+                    }
                 }
 
                 manga.lastOpenedAt?.let {

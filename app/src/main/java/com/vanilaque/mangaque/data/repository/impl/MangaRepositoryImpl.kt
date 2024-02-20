@@ -1,14 +1,14 @@
-package com.vanilaque.mangareader.data.repository.impl
+package com.vanilaque.mangaque.data.repository.impl
 
 import androidx.paging.PagingData
+import com.vanilaque.mangaque.BuildConfig
 import com.vanilaque.mangaque.api.MangaVerseApi
 import com.vanilaque.mangaque.data.model.Manga
 import com.vanilaque.mangaque.data.model.MangaWithChapters
-import com.vanilaque.mangaque.util.MANGA_QUE_HOST
-import com.vanilaque.mangaque.util.MANGA_QUE_KEY
-import com.vanilaque.mangaque.util.toDbModel
-import com.vanilaque.mangareader.data.repository.MangaRepository
+import com.vanilaque.mangaque.data.repository.MangaRepository
 import com.vanilaque.mangaque.data.repository.local.LocalMangaRepository
+import com.vanilaque.mangaque.util.MANGA_QUE_HOST
+import com.vanilaque.mangaque.util.toDbModel
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -75,7 +75,7 @@ class MangaRepositoryImpl @Inject constructor(
 
     override suspend fun fetchFromTheServer(page: String, genres: String): List<Manga> {
         val response = api.fetchManga(
-            key = MANGA_QUE_KEY,
+            key = BuildConfig.API_KEY,
             host = MANGA_QUE_HOST,
             page = page,
             genres = genres
@@ -85,7 +85,7 @@ class MangaRepositoryImpl @Inject constructor(
 
     override suspend fun fetchLatestFromTheServer(page: String, genres: String): List<Manga> {
         val response = api.fetchLatest(
-            key = MANGA_QUE_KEY,
+            key = BuildConfig.API_KEY,
             host = MANGA_QUE_HOST,
             page = page,
             genres = genres
@@ -95,7 +95,7 @@ class MangaRepositoryImpl @Inject constructor(
 
     override suspend fun searchOnTheServer(name: String): List<Manga> {
         val response = api.searchManga(
-            key = MANGA_QUE_KEY,
+            key = BuildConfig.API_KEY,
             host = MANGA_QUE_HOST,
             name = name
         )
@@ -104,7 +104,7 @@ class MangaRepositoryImpl @Inject constructor(
 
     override suspend fun getById(id: String): Manga {
         val response = api.getManga(
-            key = MANGA_QUE_KEY,
+            key = BuildConfig.API_KEY,
             host = MANGA_QUE_HOST,
             id = id
         )

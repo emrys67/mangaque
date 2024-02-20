@@ -1,16 +1,14 @@
 package com.vanilaque.mangaque.presentation.screens.main
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.vanilaque.mangaque.data.model.Manga
+import com.vanilaque.mangaque.data.repository.impl.MangaRepositoryImpl
 import com.vanilaque.mangaque.service.PrefManager
-import com.vanilaque.mangaque.service.StateManager
 import com.vanilaque.mangaque.usecase.MangaUseCase
-import com.vanilaque.mangareader.data.repository.impl.MangaRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -28,14 +26,9 @@ class ExploreViewModel @Inject constructor(
         mangaRepository.getAllPaged().cachedIn(viewModelScope)
     val hasCalledOnScrolledToEnd = mutableStateOf(false)
 
-    init {
-        StateManager.setShowBottomTopBars(true)
-    }
-
     fun fetchMangaFromTheServer() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                Log.e("", "fetch more manga from server")
                 prefManager.mangaFeedPage = prefManager.mangaFeedPage + 1
                 mangaUseCase.syncManga()
                 hasCalledOnScrolledToEnd.value = false
@@ -47,8 +40,8 @@ class ExploreViewModel @Inject constructor(
 
     fun refreshManga() {
         viewModelScope.launch {
-            prefManager.mangaFeedPage = 1
-            fetchMangaFromTheServer()
+            mangaUseCase.clearTrash()
+            state.value = ViewModelState.DefaultState
         }
     }
 
@@ -65,6 +58,7 @@ class ExploreViewModel @Inject constructor(
 
     open class ViewModelState() {
         object DefaultState : ViewModelState()
+        object RefreshingState : ViewModelState()
         class ErrorState(val e: Exception) : ViewModelState()
     }
 }

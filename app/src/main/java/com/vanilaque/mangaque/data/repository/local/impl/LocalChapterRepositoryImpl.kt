@@ -1,4 +1,4 @@
-package com.vanilaque.mangareader.data.repository.local.impl
+package com.vanilaque.mangaque.data.repository.local.impl
 
 import com.vanilaque.mangaque.data.db.MangaQueDatabase
 import com.vanilaque.mangaque.data.model.Chapter

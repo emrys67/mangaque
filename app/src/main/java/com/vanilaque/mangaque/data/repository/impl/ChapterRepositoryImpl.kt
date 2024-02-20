@@ -1,13 +1,13 @@
-package com.vanilaque.mangareader.data.repository.impl
+package com.vanilaque.mangaque.data.repository.impl
 
+import com.vanilaque.mangaque.BuildConfig
 import com.vanilaque.mangaque.api.MangaVerseApi
 import com.vanilaque.mangaque.data.model.Chapter
 import com.vanilaque.mangaque.data.model.MangaWithChapters
-import com.vanilaque.mangaque.util.MANGA_QUE_HOST
-import com.vanilaque.mangaque.util.MANGA_QUE_KEY
-import com.vanilaque.mangaque.util.toDbModel
-import com.vanilaque.mangareader.data.repository.ChapterRepository
+import com.vanilaque.mangaque.data.repository.ChapterRepository
 import com.vanilaque.mangaque.data.repository.local.LocalChapterRepository
+import com.vanilaque.mangaque.util.MANGA_QUE_HOST
+import com.vanilaque.mangaque.util.toDbModel
 import javax.inject.Inject
 
 class ChapterRepositoryImpl @Inject constructor(
@@ -44,7 +44,7 @@ class ChapterRepositoryImpl @Inject constructor(
 
     override suspend fun fetchFromTheServer(mangaId: String): List<Chapter> {
         val response = api.fetchChapters(
-            key = MANGA_QUE_KEY,
+            key = BuildConfig.API_KEY,
             host = MANGA_QUE_HOST,
             id = mangaId
         )

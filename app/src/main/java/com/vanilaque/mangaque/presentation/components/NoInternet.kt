@@ -132,9 +132,11 @@ fun parseErrorMessage(error: Exception): String {
         is SocketTimeoutException -> {
             "Server Unavailable."
         }
+
         is ConnectException -> {
             "Internet Unavailable."
         }
+
         else -> {
             "Unknown Error."
         }
