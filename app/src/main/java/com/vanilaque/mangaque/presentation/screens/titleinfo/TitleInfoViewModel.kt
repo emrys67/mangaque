@@ -19,6 +19,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -67,22 +68,31 @@ class TitleInfoViewModel @Inject constructor(
 
     private suspend fun fetchManga(mangaId: String) {
         _manga.value = mangaRepository.getMangaWithChapters(mangaId)
-
-        if (manga.value?.manga?.downloaded == true) {
-            coverBitmap.value = mangaLocalStoreService.loadMangaCoverFromFile(mangaId)
-        } else {
-            coverBitmap.value =
-                mangaLocalStoreService.downloadMangaCoverFromServer(manga.value!!.manga.thumb)
+        try {
+            if (manga.value?.manga?.downloaded == true) {
+                coverBitmap.value = mangaLocalStoreService.loadMangaCoverFromFile(mangaId)
+            } else {
+                coverBitmap.value =
+                    mangaLocalStoreService.downloadMangaCoverFromServer(manga.value!!.manga.thumb)
+            }
+        } catch (e: Exception) {
+            coverBitmap.value = null
+            Timber.e("fetchManga $e")
         }
     }
 
     private suspend fun initChapters(mangaId: String) {
-        if (!areChaptersInDb(mangaId)) {
-            chapterUseCase.syncChapters(mangaId)
-        }
+        try {
+            if (!areChaptersInDb(mangaId)) {
+                chapterUseCase.syncChapters(mangaId)
+            }
 
-        _chapters.value =
-            chapterRepository.getChaptersForManga(mangaId).chapters.map { it.chapter }
+            _chapters.value =
+                chapterRepository.getChaptersForManga(mangaId).chapters.map { it.chapter }
+        } catch (e: Exception) {
+            Timber.e("initChapters $e")
+            // TODO: add retry dialog
+        }
     }
 
     private suspend fun areChaptersInDb(mangaId: String): Boolean {
@@ -93,7 +103,7 @@ class TitleInfoViewModel @Inject constructor(
         }
     }
 
-    sealed class ViewModelState() {
+    sealed class ViewModelState {
         sealed class DownloadingState : ViewModelState() {
             object MangaIsSaving : DownloadingState()
             object MangaSaved : DownloadingState()

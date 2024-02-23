@@ -5,18 +5,16 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
-import android.util.Log
-import android.widget.Toast
 import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.vanilaque.mangaque.data.model.ChapterWithFrames
 import com.vanilaque.mangaque.data.model.MangaWithChapters
 import com.vanilaque.mangaque.data.repository.MangaRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
+import java.nio.channels.ReadPendingException
 import javax.inject.Inject
 
 class MangaLocalStoreService @Inject constructor(
@@ -25,35 +23,27 @@ class MangaLocalStoreService @Inject constructor(
 ) {
 
     suspend fun saveManga(mangaWithChapters: MangaWithChapters) {
-        try {
-            val mangaDirectory = File(context.filesDir, "manga/${mangaWithChapters.manga.id}")
-            if (!mangaDirectory.exists()) {
-                mangaDirectory.mkdirs()
-            }
-            mangaWithChapters.manga.thumb.let {
-                saveImage(it, "cover", mangaDirectory)
-            }
+        val mangaDirectory = File(context.filesDir, "manga/${mangaWithChapters.manga.id}")
+        if (!mangaDirectory.exists()) {
+            mangaDirectory.mkdirs()
+        }
+        mangaWithChapters.manga.thumb.let {
+            saveImage(it, "cover", mangaDirectory)
+        }
 
-            mangaWithChapters.chapters.forEach { chapter ->
-                val chapterDirectory = File(mangaDirectory, chapter.chapter.id)
-                chapter.frames.forEach { frame ->
-                    saveImage(frame.link, frame.index.toString(), chapterDirectory)
-                }
+        mangaWithChapters.chapters.forEach { chapter ->
+            val chapterDirectory = File(mangaDirectory, chapter.chapter.id)
+            chapter.frames.forEach { frame ->
+                saveImage(frame.link, frame.index.toString(), chapterDirectory)
             }
-            mangaWithChapters.let {
-                mangaRepository.update(
-                    it.manga.copy(
-                        downloaded = true,
-                        chaptersDownloaded = it.chapters.size
-                    )
+        }
+        mangaWithChapters.let {
+            mangaRepository.update(
+                it.manga.copy(
+                    downloaded = true,
+                    chaptersDownloaded = it.chapters.size
                 )
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            withContext(Dispatchers.Main) {
-                Toast.makeText(context, "Error while downloading images", Toast.LENGTH_LONG)
-                    .show()
-            }
+            )
         }
     }
 
@@ -91,34 +81,33 @@ class MangaLocalStoreService @Inject constructor(
     }
 
     private suspend fun saveImage(url: String, fileName: String, dir: File) {
-            Log.e("", "saveImage(url: String, fileName: String, dir: File)")
-            var tryNumber = 0
-            if (!dir.exists()) {
-                dir.mkdirs()
+        var tryNumber = 0
+        if (!dir.exists()) {
+            dir.mkdirs()
+        }
+        val file = File(dir, "img_$fileName.png")
+        val loader = ImageLoader(context)
+        val request = ImageRequest.Builder(context)
+            .data(url)
+            .allowHardware(false)
+            .build()
+        var result =
+            loader.execute(request)
+        while (result !is SuccessResult || tryNumber < 3) {
+            tryNumber++
+            result = loader.execute(request)
+            if (result !is SuccessResult && tryNumber == 3) {
+                Timber.e("Image has not been downloaded: " + url)
+                return
             }
-            val file = File(dir, "img_$fileName.png") // Assuming the images are jpg
-            val loader = ImageLoader(context)
-            val request = ImageRequest.Builder(context)
-                .data(url)
-                .allowHardware(false) // Disable hardware bitmaps.
-                .build()
-            var result =
-                loader.execute(request)  //(loader.execute(request) as SuccessResult).drawable
-            while (result !is SuccessResult || tryNumber < 3) {
-                tryNumber++
-                result = loader.execute(request)
-                if (result !is SuccessResult && tryNumber == 3) {
-                    Log.e("exc", "Image has not been downloaded $url")
-                    return
-                }
 
-            }
-            val bitmap = ((result as SuccessResult).drawable as BitmapDrawable).bitmap
+        }
+        val bitmap = (result.drawable as BitmapDrawable).bitmap
 
-            val outputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.PNG, 80, outputStream)
-            outputStream.flush()
-            outputStream.close()
+        val outputStream = FileOutputStream(file)
+        bitmap.compress(Bitmap.CompressFormat.PNG, 80, outputStream)
+        outputStream.flush()
+        outputStream.close()
     }
 
     private fun loadBitmapFromStorage(imagePath: String): Bitmap {
@@ -127,8 +116,8 @@ class MangaLocalStoreService @Inject constructor(
         if (file.exists()) {
             return BitmapFactory.decodeFile(file.absolutePath)
         } else {
-            Log.e("", "file doesnt exist")
-            throw Exception()
+            Timber.e("File doesn't exist: $imagePath")
+            throw ReadPendingException()
         }
     }
 }

@@ -1,9 +1,9 @@
 package com.vanilaque.mangaque.di
 
 import android.content.Context
+import com.vanilaque.mangaque.data.repository.MangaRepository
 import com.vanilaque.mangaque.service.MangaLocalStoreService
 import com.vanilaque.mangaque.service.PrefManager
-import com.vanilaque.mangaque.data.repository.MangaRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,7 +20,10 @@ object ServicesModule {
     }
 
     @Provides
-    fun provideMangaLocalStoreService(@ApplicationContext context: Context, mangaRepository: MangaRepository): MangaLocalStoreService {
+    fun provideMangaLocalStoreService(
+        @ApplicationContext context: Context,
+        mangaRepository: MangaRepository
+    ): MangaLocalStoreService {
         return MangaLocalStoreService(context, mangaRepository)
     }
 }

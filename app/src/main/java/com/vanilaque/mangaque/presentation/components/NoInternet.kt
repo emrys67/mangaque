@@ -17,27 +17,26 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.vanilaque.mangaque.R
 import com.vanilaque.mangaque.theme.NETWORK_ERROR_ICON_HEIGHT
 import com.vanilaque.mangaque.theme.SMALL_PADDING
-import java.net.ConnectException
-import java.net.SocketTimeoutException
 
 @Composable
 fun EmptyScreen(
     error: java.lang.Exception? = null,
 ) {
     var message by remember {
-        mutableStateOf("Find your Favorite Hero!")
+        mutableStateOf("")
     }
     var icon by remember {
         mutableStateOf(R.drawable.ic_search_document)
     }
 
     if (error != null) {
-        message = parseErrorMessage(error = error)
+        message = stringResource(R.string.error)
         icon = R.drawable.ic_network_error
     }
 
@@ -76,16 +75,6 @@ fun EmptyContent(
             isRefreshing = false
         }
     )
-
-//    SwipeRefresh(
-//        swipeEnabled = error != null,
-//        state = rememberSwipeRefreshState(isRefreshing),
-//        onRefresh = {
-//            isRefreshing = true
-//            heroes?.refresh()
-//            isRefreshing = false
-//        }
-//    ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -109,7 +98,7 @@ fun EmptyContent(
                     .size(NETWORK_ERROR_ICON_HEIGHT)
                     .alpha(alpha = alphaAnim),
                 painter = painterResource(id = icon),
-                contentDescription = "network error",
+                contentDescription = stringResource(R.string.network_error),
                 tint = if (isSystemInDarkTheme()) LightGray else DarkGray
             )
             Text(
@@ -122,23 +111,6 @@ fun EmptyContent(
                 fontWeight = FontWeight.Medium,
                 fontSize = MaterialTheme.typography.subtitle1.fontSize
             )
-        }
-    }
-//    }
-}
-
-fun parseErrorMessage(error: Exception): String {
-    return when (error) {
-        is SocketTimeoutException -> {
-            "Server Unavailable."
-        }
-
-        is ConnectException -> {
-            "Internet Unavailable."
-        }
-
-        else -> {
-            "Unknown Error."
         }
     }
 }

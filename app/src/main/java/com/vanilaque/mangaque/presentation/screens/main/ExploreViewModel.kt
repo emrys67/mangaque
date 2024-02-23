@@ -45,7 +45,7 @@ class ExploreViewModel @Inject constructor(
         }
     }
 
-    fun onLikeMangaClick(mangaItem: Manga, index: Int) {
+    fun onLikeMangaClick(mangaItem: Manga) {
         viewModelScope.launch {
             mangaRepository.update(
                 mangaItem.copy(
@@ -56,7 +56,7 @@ class ExploreViewModel @Inject constructor(
         }
     }
 
-    open class ViewModelState() {
+    open class ViewModelState {
         object DefaultState : ViewModelState()
         object RefreshingState : ViewModelState()
         class ErrorState(val e: Exception) : ViewModelState()

@@ -40,7 +40,7 @@ fun LibraryScreen(navController: NavController, viewModel: LibraryViewModel = hi
         onDispose {}
     }
 
-    Column() {
+    Column {
         Spacer(modifier = Modifier.height(8.dp))
 
         HorizontalRadioGroup(

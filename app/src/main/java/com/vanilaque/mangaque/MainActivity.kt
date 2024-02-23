@@ -3,7 +3,6 @@ package com.vanilaque.mangaque
 import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -35,8 +34,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.clearTrash()
-//        val request = OneTimeWorkRequestBuilder<RefreshMangaWorker>().build()
-//        viewModel.workManager.enqueue(request)
 
         setContent {
             val isFocused by viewModel.isSearchFieldFocused
@@ -63,9 +60,6 @@ class MainActivity : ComponentActivity() {
             LaunchedEffect(Unit) {
                 if (!permissionsState.allPermissionsGranted) {
                     permissionsState.launchMultiplePermissionRequest()
-                    Log.e("", "permissions request")
-                } else {
-                    Log.e("", "all permissions are granted")
                 }
             }
 
@@ -75,9 +69,7 @@ class MainActivity : ComponentActivity() {
                         Header(
                             text = searchQuery,
                             onTextChange = { viewModel.searchText.value = it },
-                            onSearchTitle = {
-                                //viewModel.searchQuerryForWebtoon()
-                            },
+                            onSearchTitle = {},
                             onSearchButtonClicked = {
                                 viewModel.isSearchFieldFocused.value =
                                     !viewModel.isSearchFieldFocused.value

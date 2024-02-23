@@ -44,6 +44,9 @@ import com.vanilaque.mangaque.presentation.components.HorizontalRadioGroup
 import com.vanilaque.mangaque.presentation.components.MangaSaveInProgressDialog
 import com.vanilaque.mangaque.presentation.navigation.MangaScreens
 import com.vanilaque.mangaque.service.StateManager
+import com.vanilaque.mangaque.theme.EXTRA_SMALL_PADDING
+import com.vanilaque.mangaque.theme.MEDIUM_PADDING
+import com.vanilaque.mangaque.theme.MICRO_PADDING
 import com.vanilaque.mangaque.theme.MangaPink
 import com.vanilaque.mangaque.theme.MangaPurple
 
@@ -93,14 +96,14 @@ fun TitleInfoScreen(navController: NavController, viewModel: TitleInfoViewModel 
                         rememberScrollState()
                     ) else Modifier
                 )
-                .padding(8.dp)
+                .padding(EXTRA_SMALL_PADDING)
         ) {
 
             manga?.let {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = MEDIUM_PADDING),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
@@ -125,7 +128,7 @@ fun TitleInfoScreen(navController: NavController, viewModel: TitleInfoViewModel 
                                 )
                             }
                             .align(Alignment.Bottom)
-                            .padding(end = 16.dp)
+                            .padding(end = MEDIUM_PADDING)
                     )
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -136,7 +139,7 @@ fun TitleInfoScreen(navController: NavController, viewModel: TitleInfoViewModel 
                     modifier = Modifier
                         .height(24.dp)
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = MEDIUM_PADDING),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     it.manga.genres.let { genres ->
@@ -178,14 +181,17 @@ fun TitleInfoScreen(navController: NavController, viewModel: TitleInfoViewModel 
                     Card(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(8.dp),
+                            .padding(EXTRA_SMALL_PADDING),
                         shape = RoundedCornerShape(8.dp), backgroundColor = Color.White,
                         elevation = 6.dp,
                     ) {
                         Text(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(vertical = 16.dp, horizontal = 8.dp),
+                                .padding(
+                                    vertical = MEDIUM_PADDING,
+                                    horizontal = EXTRA_SMALL_PADDING
+                                ),
                             text = manga!!.manga.summary,
                             textAlign = TextAlign.Start,
                             fontSize = 18.sp,
@@ -212,7 +218,10 @@ fun TitleInfoScreen(navController: NavController, viewModel: TitleInfoViewModel 
                             horizontalArrangement = Arrangement.spacedBy(32.dp),
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                .padding(
+                                    horizontal = MEDIUM_PADDING,
+                                    vertical = EXTRA_SMALL_PADDING
+                                )
                         ) {
                             items(chapters) {
                                 ChapterItem(chapter = it, mangaItem = manga!!, navController)
@@ -236,7 +245,7 @@ fun GenreBox(name: String) {
             .wrapContentWidth()
             .clip(RoundedCornerShape(4.dp))
             .background(color = Color.LightGray)
-            .padding(horizontal = 4.dp),
+            .padding(horizontal = MICRO_PADDING),
         contentAlignment = Center
     ) {
         Text(

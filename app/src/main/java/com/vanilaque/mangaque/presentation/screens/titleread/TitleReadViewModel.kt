@@ -22,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,7 +36,7 @@ class TitleReadViewModel @Inject constructor(
     val prefManager: PrefManager
 ) : ViewModel() {
 
-    val _chapterWithFrames: MutableStateFlow<ChapterWithFrames?> = MutableStateFlow(null)
+    private val _chapterWithFrames: MutableStateFlow<ChapterWithFrames?> = MutableStateFlow(null)
     val chapterWithFrames: StateFlow<ChapterWithFrames?> = _chapterWithFrames
     val chapterBitmaps: MutableState<List<Bitmap>> = mutableStateOf(listOf())
     var chapterIndex: Int = 0
@@ -80,14 +81,26 @@ class TitleReadViewModel @Inject constructor(
     }
 
     private suspend fun fetchChapterFramesRemote() {
-        val images = chapterFrameRepository.fetchFromTheServer(chapter.id)
-        framesRepository.insertAll(images)
+        try {
+            val images = chapterFrameRepository.fetchFromTheServer(chapter.id)
+            framesRepository.insertAll(images)
+        }
+        catch (e: Exception){
+            Timber.e("fetchChapterFramesRemote $e")
+            // TODO: handle (redirect back or show retry dialog)
+        }
     }
 
     private fun fetchChapterFramesLocalStorage() {
         if (chapterWithFrames.value != null) {
-            chapterBitmaps.value =
-                mangaLocalStoreService.loadChapterImagesFromFile(chapterWithFrames.value!!)
+            try {
+                chapterBitmaps.value =
+                    mangaLocalStoreService.loadChapterImagesFromFile(chapterWithFrames.value!!)
+            }
+            catch (e: Exception){
+                Timber.e("fetchChapterFramesLocalStorage $e")
+                // TODO: handle (redirect back or show retry dialog)
+            }
         }
     }
 

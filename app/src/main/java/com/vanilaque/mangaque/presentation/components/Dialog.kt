@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.vanilaque.mangaque.R
 import com.vanilaque.mangaque.presentation.screens.titleinfo.TitleInfoViewModel
+import com.vanilaque.mangaque.theme.MEDIUM_PADDING
 import com.vanilaque.mangaque.theme.MangaPurple
 import com.vanilaque.mangaque.theme.Purple200
 
@@ -42,7 +43,7 @@ fun MangaSaveInProgressDialog(
         Dialog(onDismissRequest = onClose) {
             Card(
                 modifier = modifier
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = MEDIUM_PADDING)
                     .fillMaxWidth(),
                 backgroundColor = Color.White,
                 shape = RoundedCornerShape(8.dp)
@@ -51,7 +52,7 @@ fun MangaSaveInProgressDialog(
                     horizontalAlignment = CenterHorizontally,
                     verticalArrangement = Arrangement.Bottom,
                     modifier = Modifier
-                        .padding(16.dp)
+                        .padding(MEDIUM_PADDING)
                         .fillMaxWidth()
                         .height(160.dp)
                 ) {

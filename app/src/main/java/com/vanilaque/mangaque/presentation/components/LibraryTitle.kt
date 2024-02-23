@@ -19,12 +19,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vanilaque.mangaque.R
 import com.vanilaque.mangaque.data.model.Manga
+import com.vanilaque.mangaque.theme.EXTRA_SMALL_PADDING
+import com.vanilaque.mangaque.theme.MICRO_PADDING
 import com.vanilaque.mangaque.theme.MangaPurple
 import com.vanilaque.mangaque.util.millisToDateString
 
@@ -38,7 +41,7 @@ fun LibraryMangaTitle(
         modifier = Modifier
             .height(IMAGE_HEIGHT_MEDIUM.dp)
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(EXTRA_SMALL_PADDING),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         TitlePictureFromServer(
@@ -62,46 +65,49 @@ fun LibraryMangaTitle(
                 )
 
                 if (manga.chaptersDownloaded > 0) {
-                    Row() {
+                    Row {
                         Image(
                             painter = painterResource(id = R.drawable.downloaded),
                             contentDescription = "downloaded",
                             modifier = Modifier
-                                .padding(4.dp)
+                                .padding(MICRO_PADDING)
                                 .size(24.dp)
                                 .align(Alignment.CenterVertically),
                             colorFilter = ColorFilter.tint(color = Color.Black)
                         )
                         Text(
-                            text = "${manga.chaptersDownloaded}  chapters",
+                            text = stringResource(
+                                R.string.chapters_count,
+                                manga.chaptersDownloaded
+                            ),
                             fontSize = 16.sp,
                             textAlign = TextAlign.Start,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .align(Alignment.CenterVertically)
-                                .padding(start = 8.dp)
+                                .padding(start = EXTRA_SMALL_PADDING)
                         )
                     }
                 }
 
                 if (manga.lastChapterRead > 0) {
-                    Row() {
+                    Row {
                         Image(
                             painter = painterResource(id = R.drawable.eye),
                             contentDescription = "seen",
                             modifier = Modifier
-                                .padding(4.dp)
+                                .padding(MICRO_PADDING)
                                 .size(24.dp)
                                 .align(Alignment.CenterVertically),
                             colorFilter = ColorFilter.tint(color = Color.Black)
                         )
                         Text(
-                            text = "${manga.lastChapterRead} chapters",
+                            text = stringResource(R.string.chapters_count, manga.lastChapterRead),
                             fontSize = 16.sp,
                             textAlign = TextAlign.Start,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(start = 8.dp)
+                                .padding(start = EXTRA_SMALL_PADDING)
                                 .align(Alignment.CenterVertically)
                         )
                     }
@@ -109,24 +115,30 @@ fun LibraryMangaTitle(
 
                 manga.lastOpenedAt?.let {
                     Text(
-                        text = "${millisToDateString(it)} last opened",
+                        text = stringResource(
+                            R.string.chapters_last_opened,
+                            millisToDateString(it)
+                        ),
                         fontSize = 12.sp,
                         textAlign = TextAlign.Start,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 8.dp),
+                            .padding(start = EXTRA_SMALL_PADDING),
                         color = Color.Gray
                     )
                 }
 
                 manga.addedToFavoritesAt?.let {
                     Text(
-                        text = "${millisToDateString(it)} was added",
+                        text = stringResource(
+                            R.string.chapters_added_to_favorite,
+                            millisToDateString(it)
+                        ),
                         fontSize = 12.sp,
                         textAlign = TextAlign.Start,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 8.dp),
+                            .padding(start = EXTRA_SMALL_PADDING),
                         color = Color.Gray
                     )
                 }
@@ -161,10 +173,13 @@ fun SmallTitle(
             isLiked = manga.isInFavorites
         )
         Text(
-            text = manga.title, fontSize = 14.sp, textAlign = TextAlign.Start,
+            text = manga.title,
+            fontSize = 14.sp,
+            textAlign = TextAlign.Start,
             modifier = Modifier
                 .width(IMAGE_WIDTH_SMALL.dp)
-                .padding(top = 4.dp, start = 4.dp, end = 4.dp), fontWeight = FontWeight.SemiBold
+                .padding(top = MICRO_PADDING, start = MICRO_PADDING, end = MICRO_PADDING),
+            fontWeight = FontWeight.SemiBold
         )
     }
 }
@@ -180,7 +195,7 @@ fun SearchedTitle(
         modifier = Modifier
             .height(IMAGE_HEIGHT_MEDIUM.dp)
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(EXTRA_SMALL_PADDING),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         TitlePictureFromServer(
@@ -221,12 +236,12 @@ fun SearchedTitle(
                 colors = ButtonDefaults.buttonColors(backgroundColor = MangaPurple),
                 elevation = ButtonDefaults.elevation(4.dp)
             ) {
-                Text(text = "Read now", fontSize = 22.sp, color = Color.White)
+                Text(
+                    text = stringResource(R.string.read_now),
+                    fontSize = 22.sp,
+                    color = Color.White
+                )
             }
         }
     }
 }
-
-//fun navigateToTitleInfo(navController: NavController, webtoon: Webtoon) {
-//    navController.navigate(MangaScreens.TitleInfoScreen.passArg(webtoon.mangaSlug))
-//}

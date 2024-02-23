@@ -27,8 +27,8 @@ import androidx.compose.ui.graphics.Color
 import com.vanilaque.mangaque.theme.ABOUT_PLACEHOLDER_HEIGHT
 import com.vanilaque.mangaque.theme.EXTRA_SMALL_PADDING
 import com.vanilaque.mangaque.theme.HERO_ITEM_HEIGHT
-import com.vanilaque.mangaque.theme.LARGE_PADDING
 import com.vanilaque.mangaque.theme.MEDIUM_PADDING
+import com.vanilaque.mangaque.theme.MEDIUM_PLUS_PADDING
 import com.vanilaque.mangaque.theme.MangaPurple
 import com.vanilaque.mangaque.theme.NAME_PLACEHOLDER_HEIGHT
 import com.vanilaque.mangaque.theme.RATING_PLACEHOLDER_HEIGHT
@@ -94,7 +94,7 @@ fun ShimmerItem(alpha: Float) {
             .height(HERO_ITEM_HEIGHT),
         color = if (isSystemInDarkTheme())
             Color.Black else ShimmerLightGray,
-        shape = RoundedCornerShape(size = LARGE_PADDING)
+        shape = RoundedCornerShape(size = MEDIUM_PLUS_PADDING)
     ) {
         Column(
             modifier = Modifier

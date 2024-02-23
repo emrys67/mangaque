@@ -13,4 +13,12 @@
     <string name="manga_downloading_warning">Don\'t do any actions, until manga is downloaded</string>
     <string name="manga_downloaded_message">Manga has been saved on device!</string>
     <string name="manga_downloading_error">During downloading occurred an error</string>
+    <string name="username">Username</string>
+    <string name="search">Search</string>
+    <string name="chapters_count">%1$s chapters</string>
+    <string name="chapters_last_opened">%1$s last opened</string>
+    <string name="chapters_added_to_favorite">%1$s was added</string>
+    <string name="read_now">Read now</string>
+    <string name="error">Error</string>
+    <string name="network_error">Network error</string>
 </resources>

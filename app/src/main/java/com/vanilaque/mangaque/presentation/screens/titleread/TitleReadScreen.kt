@@ -42,6 +42,9 @@ import com.vanilaque.mangaque.R
 import com.vanilaque.mangaque.data.model.ChapterWithFrames
 import com.vanilaque.mangaque.presentation.navigation.MangaScreens
 import com.vanilaque.mangaque.service.StateManager
+import com.vanilaque.mangaque.theme.EXTRA_LARGE_PADDING
+import com.vanilaque.mangaque.theme.LARGE_PADDING
+import com.vanilaque.mangaque.theme.MEDIUM_PADDING
 import com.vanilaque.mangaque.theme.MangaPurple
 import com.vanilaque.mangaque.theme.Purple200
 
@@ -83,7 +86,7 @@ fun TitleReadScreen(navController: NavController, viewModel: TitleReadViewModel 
             Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-                .padding(horizontal = 16.dp, vertical = 32.dp)
+                .padding(horizontal = MEDIUM_PADDING, vertical = LARGE_PADDING)
         ) {
             ClickableText(
                 text = AnnotatedString(stringResource(id = R.string.previous)), style = TextStyle(
@@ -162,7 +165,7 @@ fun DisplayChapterImagesFromRemote(chapterWithFrames: ChapterWithFrames?) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentHeight()
-                            .padding(vertical = 64.dp)
+                            .padding(vertical = EXTRA_LARGE_PADDING)
                     ) {
                         CircularProgressIndicator(
                             color = MangaPurple,

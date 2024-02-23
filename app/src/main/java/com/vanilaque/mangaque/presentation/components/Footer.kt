@@ -18,6 +18,8 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.vanilaque.mangaque.R
+import com.vanilaque.mangaque.theme.MEDIUM_PADDING
+import com.vanilaque.mangaque.theme.MICRO_PADDING
 import com.vanilaque.mangaque.theme.MangaPink
 import com.vanilaque.mangaque.theme.MangaPurple
 
@@ -28,7 +30,7 @@ fun Footer(onClick: (FooterPath) -> Unit = {}, footerPath: FooterPath) {
             .fillMaxWidth()
             .height(72.dp)
             .background(color = Color.White)
-            .padding(16.dp)
+            .padding(MEDIUM_PADDING)
             .clip(RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp)),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -66,9 +68,9 @@ fun Footer(onClick: (FooterPath) -> Unit = {}, footerPath: FooterPath) {
             ),
             modifier = Modifier
                 .size(34.dp)
-                .padding(top = 4.dp)
+                .padding(top = MICRO_PADDING)
                 .clickable { onClick(FooterPath.ACCOUNT) }
-        ) // keep in sharedPreferences
+        )
     }
 }
 

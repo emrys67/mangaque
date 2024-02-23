@@ -21,6 +21,9 @@ import com.vanilaque.mangaque.presentation.components.FooterPath
 import com.vanilaque.mangaque.presentation.components.SmallTitle
 import com.vanilaque.mangaque.presentation.navigation.MangaScreens
 import com.vanilaque.mangaque.service.StateManager
+import com.vanilaque.mangaque.theme.EXTRA_LARGE_PADDING
+import com.vanilaque.mangaque.theme.EXTRA_SMALL_PADDING
+import com.vanilaque.mangaque.theme.MEDIUM_PADDING
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -63,13 +66,13 @@ fun ExploreScreen(
                     horizontalArrangement = Arrangement.spacedBy(32.dp),
                     modifier = Modifier
                         .padding(
-                            horizontal = 16.dp,
-                            vertical = 8.dp
+                            horizontal = MEDIUM_PADDING,
+                            vertical = EXTRA_SMALL_PADDING
                         )
                         .pullRefresh(refreshState)
                 ) {
                     items(mangaPaged.itemCount) { mangaItem ->
-                        mangaPaged.get(mangaItem)?.let {
+                        mangaPaged[mangaItem]?.let {
                             SmallTitle(
                                 manga = it, // TODO: show only if mangaitem != null
                                 onClick = {
@@ -81,8 +84,7 @@ fun ExploreScreen(
                                 onLikeClick = {
                                     onLikeClick(
                                         viewModel,
-                                        mangaPaged[mangaItem]!!,
-                                        mangaItem
+                                        mangaPaged[mangaItem]!!
                                     )
                                 }
                             )
@@ -98,15 +100,15 @@ fun ExploreScreen(
                 refreshing = viewModelState is ExploreViewModel.ViewModelState.RefreshingState,
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .padding(bottom = 64.dp)
+                    .padding(bottom = EXTRA_LARGE_PADDING)
                     .size(64.dp)
             )
         }
     }
 }
 
-fun onLikeClick(viewModel: ExploreViewModel, manga: Manga, index: Int) {
-    viewModel.onLikeMangaClick(manga, index)
+fun onLikeClick(viewModel: ExploreViewModel, manga: Manga) {
+    viewModel.onLikeMangaClick(manga)
 }
 
 fun navigateToTitleInfo(navController: NavController, mangaId: String) {

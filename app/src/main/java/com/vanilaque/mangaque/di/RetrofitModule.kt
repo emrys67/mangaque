@@ -22,11 +22,11 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object RetrofitModule {
-    val logging = HttpLoggingInterceptor().apply {
+    private val logging = HttpLoggingInterceptor().apply {
         setLevel(HttpLoggingInterceptor.Level.HEADERS)
         setLevel(HttpLoggingInterceptor.Level.BODY)
     }
-    val json = Json {
+    private val json = Json {
         ignoreUnknownKeys = true
     }
 
@@ -56,22 +56,4 @@ object RetrofitModule {
     fun provideMangaVerseApi(retrofit: Retrofit): MangaVerseApi {
         return retrofit.create(MangaVerseApi::class.java)
     }
-
-//    @Provides
-//    @Singleton
-//    fun provideMangaRepository(
-//        api: MangaVerseApi,
-//        localRepo: LocalMangaRepository
-//    ): MangaRepository {
-//        return MangaRepositoryImpl(api, localRepo)
-//    }
-
-//    @Provides
-//    @Singleton
-//    fun provideChaptersRepository(
-//        api: MangaVerseApi,
-//        localRepo: LocalChapterRepository
-//    ): ChapterRepository {
-//        return ChapterRepositoryImpl(localRepo, api)
-//    }
 }

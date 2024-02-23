@@ -1,7 +1,5 @@
 package com.vanilaque.mangaque.theme
 
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
 import androidx.compose.ui.graphics.Color
 
 val Purple200 = Color(0xFFBB86FC)
@@ -18,18 +16,5 @@ val LikeColorChosen = Color(color = 0xFFF090D5)
 val ShimmerLightGray = Color(0xFFF1F1F1)
 val ShimmerMediumGray = Color(0xFFE3E3E3)
 val ShimmerDarkGray = Color(0xFF1D1D1D)
-
-private val DarkColorPalette = darkColors(
-    primary = Purple200,
-    primaryVariant = Purple700,
-    secondary = Teal200,
-
-    )
-
-private val LightColorPalette = lightColors(
-    primary = MangaPurple,
-    primaryVariant = FieldColor,
-    secondary = MangaPink,
-)
 
 
