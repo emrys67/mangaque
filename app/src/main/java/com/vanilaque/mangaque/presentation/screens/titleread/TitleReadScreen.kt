@@ -1,6 +1,9 @@
-package com.vanilaque.mangaque.presentation.components.screens.titleread
+package com.vanilaque.mangaque.presentation.screens.titleread
 
-import androidx.activity.compose.BackHandler
+import android.graphics.Bitmap
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,13 +13,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
@@ -25,136 +25,201 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.vanilaque.mangaque.R
+import com.vanilaque.mangaque.data.model.ChapterWithFrames
 import com.vanilaque.mangaque.presentation.navigation.MangaScreens
 import com.vanilaque.mangaque.service.StateManager
+import com.vanilaque.mangaque.theme.EXTRA_LARGE_PADDING
+import com.vanilaque.mangaque.theme.LARGE_PADDING
+import com.vanilaque.mangaque.theme.MEDIUM_PADDING
 import com.vanilaque.mangaque.theme.MangaPurple
+import com.vanilaque.mangaque.theme.Purple200
 
 @Composable
 fun TitleReadScreen(navController: NavController, viewModel: TitleReadViewModel = hiltViewModel()) {
-    val chapter by viewModel.chapter.collectAsState()
+    val onBackPressedDispatcher =
+        LocalOnBackPressedDispatcherOwner.current!!.onBackPressedDispatcher
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val chapterWithFrames by viewModel.chapterWithFrames.collectAsState()
+    val chapterBitmaps by viewModel.chapterBitmaps
+    val downloadedMode by viewModel.downloadedMode
 
-    BackHandler {
-        navController.navigate(MangaScreens.TitleInfoScreen.passArg(viewModel.mangaId))
-    }
+
 
     DisposableEffect(Unit) {
         StateManager.setShowBottomTopBars(false)
-        onDispose {
+        onDispose {}
+    }
+
+    DisposableEffect(navBackStackEntry) {
+        val currentRoute = navBackStackEntry?.destination?.route
+        if (navController.backQueue.size > 1) {
+            if (currentRoute == MangaScreens.TitleReadScreen.route &&
+                navController.backQueue[navController.backQueue.size - 2].destination.route == MangaScreens.TitleReadScreen.route
+            ) {
+                navController.backQueue.removeAt(navController.backQueue.size - 2)
+            }
         }
+        onDispose {}
     }
 
     Box {
-        LazyColumn(Modifier.fillMaxSize()) {
-            if (chapter != null) {
-                chapter!!.frames.let {
-                    items(items = it) { item ->
-                        var imageLoaded = remember { mutableStateOf(false) }
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(item.link)
-                                .crossfade(true)
-                                .build(),
-                            contentDescription = "image", modifier = Modifier
-                                .fillMaxSize(), contentScale = ContentScale.Crop, onSuccess = {
-                                imageLoaded.value = true
-                            }, onError = {
-                                imageLoaded.value = false
-                            }
-                        )
-                        if (!imageLoaded.value) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight()
-                            ) {
-                                CircularProgressIndicator(
-                                    color = MangaPurple,
-                                    modifier = Modifier
-                                        .size(32.dp)
-                                        .align(Alignment.Center)
-                                )
-                            }
-                        }
-                    }
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(80.dp))
-                }
-            }
+        if (!downloadedMode) {
+            DisplayChapterImagesFromRemote(chapterWithFrames)
+        } else {
+            DisplayChapterImagesFromLocalStorage(chapterBitmaps)
         }
         Row(
             Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-                .padding(8.dp)
+                .padding(horizontal = MEDIUM_PADDING, vertical = LARGE_PADDING)
         ) {
-            Button(
-                modifier = Modifier.weight(1f),
-                onClick = {
-                    onPrevClick(
-                        navController = navController,
-                        viewModel = viewModel
-                    )
-                },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.LightGray)
+            ClickableText(
+                text = AnnotatedString(stringResource(id = R.string.previous)), style = TextStyle(
+                    fontSize = 20.sp,
+                    color = Purple200
+                )
             ) {
-                Text(
-                    text = "Prev",
-                    modifier = Modifier.wrapContentSize(),
-                    fontSize = 14.sp,
-                    color = Color.White
+                onPrevClick(
+                    navController = navController,
+                    viewModel = viewModel,
+                    onBackPressedDispatcher = onBackPressedDispatcher
                 )
             }
 
-            Spacer(modifier = Modifier.weight(2f))
 
-            Button(
-                modifier = Modifier.weight(1f),
-                onClick = {
-                    onNextClick(
-                        navController = navController,
-                        viewModel = viewModel
-                    )
-                },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.LightGray)
+            Spacer(modifier = Modifier.weight(1f))
+
+            ClickableText(
+                text = AnnotatedString(stringResource(R.string.next)), style = TextStyle(
+                    fontSize = 20.sp,
+                    color = Purple200
+                )
             ) {
-                Text(
-                    text = "Next",
-                    modifier = Modifier.wrapContentSize(),
-                    fontSize = 14.sp,
-                    color = Color.White
+                onNextClick(
+                    navController = navController,
+                    viewModel = viewModel,
+                    onBackPressedDispatcher = onBackPressedDispatcher
                 )
             }
         }
     }
 }
 
-fun onNextClick(navController: NavController, viewModel: TitleReadViewModel) { // TODO:  
-    navController.navigate(
-        MangaScreens.TitleReadScreen.passArguments(
-            viewModel.mangaId,
-            viewModel.chapterIndex + 1,
-            viewModel.chapter.value!!.chapter.id
-        )
-    )
+@Composable
+fun DisplayChapterImagesFromLocalStorage(chapterBitmaps: List<Bitmap>) {
+    LazyColumn(Modifier.fillMaxSize()) {
+        items(items = chapterBitmaps) { item ->
+            Image(
+                bitmap = item.asImageBitmap(),
+                contentDescription = "image",
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentScale = ContentScale.Crop,
+            )
+        }
+        item {
+            Spacer(modifier = Modifier.height(80.dp))
+        }
+    }
 }
 
-fun onPrevClick(navController: NavController, viewModel: TitleReadViewModel) { // TODO:
-    navController.navigate(
-        MangaScreens.TitleReadScreen.passArguments(
-            viewModel.mangaId,
-            viewModel.chapterIndex - 1,
-            viewModel.chapter.value!!.chapter.id
+@Composable
+fun DisplayChapterImagesFromRemote(chapterWithFrames: ChapterWithFrames?) {
+    LazyColumn(Modifier.fillMaxSize()) {
+        if (chapterWithFrames != null) {
+            items(items = chapterWithFrames.frames) { item ->
+                val imageLoaded = remember { mutableStateOf(false) }
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(item.link)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "image",
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentScale = ContentScale.Crop,
+                    onSuccess = {
+                        imageLoaded.value = true
+                    },
+                    onError = {
+                        imageLoaded.value = false
+                    }
+                )
+                if (!imageLoaded.value) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .padding(vertical = EXTRA_LARGE_PADDING)
+                    ) {
+                        CircularProgressIndicator(
+                            color = MangaPurple,
+                            modifier = Modifier
+                                .size(32.dp)
+                                .align(Alignment.Center)
+                        )
+                    }
+                }
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(80.dp))
+            }
+        }
+    }
+}
+
+fun onNextClick(
+    navController: NavController,
+    viewModel: TitleReadViewModel,
+    onBackPressedDispatcher: OnBackPressedDispatcher
+) {
+    val chapterIndexToNavigate = viewModel.chapterIndex + 1
+
+    if (viewModel.checkIfChapterExists(chapterIndexToNavigate)) {
+        navController.navigate(
+            MangaScreens.TitleReadScreen.passArguments(
+                viewModel.mangaId,
+                chapterIndexToNavigate,
+                viewModel.chapterWithFrames.value!!.chapter.id
+            )
         )
-    )
+    } else {
+        onBackPressedDispatcher.onBackPressed()
+    }
+}
+
+fun onPrevClick(
+    navController: NavController,
+    viewModel: TitleReadViewModel,
+    onBackPressedDispatcher: OnBackPressedDispatcher
+) {
+    val chapterIndexToNavigate = viewModel.chapterIndex - 1
+
+    if (viewModel.checkIfChapterExists(chapterIndexToNavigate)) {
+        navController.navigate(
+            MangaScreens.TitleReadScreen.passArguments(
+                viewModel.mangaId,
+                chapterIndexToNavigate,
+                viewModel.chapterWithFrames.value!!.chapter.id
+            )
+        )
+    } else {
+        onBackPressedDispatcher.onBackPressed()
+    }
 }

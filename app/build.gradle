@@ -18,12 +18,14 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "API_KEY", "${MANGA_QUE_KEY}")
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
     }
     compileOptions {
@@ -114,15 +116,11 @@ dependencies {
     //coil
     implementation("io.coil-kt:coil:2.4.0")
     implementation("io.coil-kt:coil-compose:2.4.0")
-    implementation ("com.google.accompanist:accompanist-drawablepainter:0.30.1")
+    implementation("com.google.accompanist:accompanist-drawablepainter:0.30.1")
 
     //paging
     implementation "androidx.paging:paging-compose:3.2.0"
     implementation "androidx.paging:paging-runtime:3.2.0"
-
-    //worker
-    implementation("androidx.work:work-runtime-ktx:$work_version")
-    implementation "androidx.hilt:hilt-work:1.0.0"
 
     // Testing
     androidTestImplementation "androidx.test:runner:1.5.2"

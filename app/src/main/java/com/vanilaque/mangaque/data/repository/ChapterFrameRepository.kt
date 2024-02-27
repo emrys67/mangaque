@@ -1,4 +1,4 @@
-package com.vanilaque.mangareader.data.repository
+package com.vanilaque.mangaque.data.repository
 
 import com.vanilaque.mangaque.data.model.ChapterFrame
 import com.vanilaque.mangaque.data.model.ChapterWithFrames
@@ -17,4 +17,5 @@ interface ChapterFrameRepository {
     suspend fun delete(frame: ChapterFrame)
 
     suspend fun fetchFromTheServer(chapterId: String): List<ChapterFrame>
+
 }

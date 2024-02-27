@@ -8,10 +8,10 @@ import com.vanilaque.mangaque.util.MANGA_DATABASE_TABLE
 
 @Dao
 interface MangaDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(manga: Manga)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(manga: List<Manga>)
 
     @Update
@@ -19,6 +19,12 @@ interface MangaDao {
 
     @Query("SELECT * FROM $MANGA_DATABASE_TABLE")
     suspend fun getAll(): List<Manga>
+
+    @Query("SELECT * FROM $MANGA_DATABASE_TABLE WHERE isInFavorites = 1")
+    fun getAllFavorite() : PagingSource<Int, Manga>
+
+    @Query("SELECT * FROM $MANGA_DATABASE_TABLE WHERE downloaded = 1")
+    fun getAllSaved(): PagingSource<Int, Manga>
 
     @Query("SELECT * FROM $MANGA_DATABASE_TABLE")
     fun getAllDataPaged(): PagingSource<Int, Manga>

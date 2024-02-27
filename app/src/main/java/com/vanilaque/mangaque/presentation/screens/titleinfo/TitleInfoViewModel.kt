@@ -1,7 +1,6 @@
 package com.vanilaque.mangaque.presentation.screens.titleinfo
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
@@ -10,18 +9,17 @@ import androidx.lifecycle.viewModelScope
 import com.vanilaque.mangaque.data.model.Chapter
 import com.vanilaque.mangaque.data.model.Manga
 import com.vanilaque.mangaque.data.model.MangaWithChapters
+import com.vanilaque.mangaque.data.repository.ChapterRepository
+import com.vanilaque.mangaque.data.repository.MangaRepository
 import com.vanilaque.mangaque.presentation.components.ChooseBox
 import com.vanilaque.mangaque.service.MangaLocalStoreService
-import com.vanilaque.mangaque.service.PrefManager
 import com.vanilaque.mangaque.usecase.ChapterUseCase
-import com.vanilaque.mangaque.util.TITLE_INFO_WEBTOON_ARGUMENT_KEY
-import com.vanilaque.mangareader.data.repository.ChapterFrameRepository
-import com.vanilaque.mangareader.data.repository.ChapterRepository
-import com.vanilaque.mangareader.data.repository.MangaRepository
+import com.vanilaque.mangaque.util.TITLE_INFO_MANGA_ARGUMENT_KEY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -32,65 +30,70 @@ class TitleInfoViewModel @Inject constructor(
     private val mangaRepository: MangaRepository,
     private val mangaLocalStoreService: MangaLocalStoreService,
     private val chapterUseCase: ChapterUseCase,
-    private val prefManager: PrefManager,
 ) : ViewModel() {
 
     val state: MutableState<ViewModelState> = mutableStateOf(ViewModelState.DefaultState)
 
     val chosenBox = mutableStateOf(ChooseBox.DESCRIPTION)
-    val _chapters: MutableStateFlow<List<Chapter>> = MutableStateFlow(listOf())
+    private val _chapters: MutableStateFlow<List<Chapter>> = MutableStateFlow(listOf())
     val chapters: StateFlow<List<Chapter>> = _chapters
 
-    val _manga: MutableStateFlow<MangaWithChapters?> = MutableStateFlow(null)
+    private val _manga: MutableStateFlow<MangaWithChapters?> = MutableStateFlow(null)
     val manga: StateFlow<MangaWithChapters?> = _manga
-    val downloadedChapters = mutableStateOf<List<Bitmap>>(listOf())
     val coverBitmap: MutableState<Bitmap?> = mutableStateOf(null)
 
     init {
         viewModelScope.launch {
-            val mangaSlug = savedStateHandle.get<String>(TITLE_INFO_WEBTOON_ARGUMENT_KEY)!!
+            val mangaSlug = savedStateHandle.get<String>(TITLE_INFO_MANGA_ARGUMENT_KEY)!!
 
-            //download webtoon cover from storage/server
-
-            initManga(mangaSlug)
+            fetchManga(mangaSlug)
             initChapters(mangaSlug)
-            coverBitmap.value = mangaLocalStoreService.downloadWebtoonCoverFromServer(manga.value!!.manga.thumb)
         }
     }
 
-    fun getWebtoonFromLocalStorage(mangaItem: Manga) {
-        viewModelScope.launch {
-            //mangaLocalStoreService.saveWebtoon(mangaItem, chapters.value)
-            downloadedChapters.value = mangaLocalStoreService.loadChapterImagesFromFile(
-                mangaRepository.getMangaWithChapters(mangaItem.id), 1
-            )
-            Log.e("", "${downloadedChapters.value}")
-        }
+    fun saveMangaInLocalStorage(mangaItem: Manga) {
+        if (!mangaItem.downloaded && state.value !is ViewModelState.DownloadingState.MangaIsSaving)
+            viewModelScope.launch {
+                try {
+                    state.value = ViewModelState.DownloadingState.MangaIsSaving
+                    chapterUseCase.syncChapters(mangaItem.id)
+                    val mangaWithChapters = mangaRepository.getMangaWithChapters(mangaItem.id)
+                    mangaLocalStoreService.saveManga(mangaWithChapters)
+                    state.value = ViewModelState.DownloadingState.MangaSaved
+                } catch (e: Exception) {
+                    state.value = ViewModelState.DownloadingState.MangaSaveError
+                }
+            }
     }
 
-    private suspend fun initManga(mangaId: String) {
+    private suspend fun fetchManga(mangaId: String) {
         _manga.value = mangaRepository.getMangaWithChapters(mangaId)
+        try {
+            if (manga.value?.manga?.downloaded == true) {
+                coverBitmap.value = mangaLocalStoreService.loadMangaCoverFromFile(mangaId)
+            } else {
+                coverBitmap.value =
+                    mangaLocalStoreService.downloadMangaCoverFromServer(manga.value!!.manga.thumb)
+            }
+        } catch (e: Exception) {
+            coverBitmap.value = null
+            Timber.e("fetchManga $e")
+        }
     }
 
     private suspend fun initChapters(mangaId: String) {
-        if (areChaptersInDb(mangaId)) {
-            _chapters.value =
-                chapterRepository.getChaptersForManga(mangaId).chapters.map { it.chapter }
-        } else {
-            chapterUseCase.syncChapters(mangaId)
-            _chapters.value =
-                chapterRepository.getChaptersForManga(mangaId).chapters.map { it.chapter }
-        }
-    }
+        try {
+            if (!areChaptersInDb(mangaId)) {
+                chapterUseCase.syncChapters(mangaId)
+            }
 
-    private suspend fun isMangaDownloaded(mangaId: String): Boolean {
-        return try {
-            mangaRepository.get(mangaId).downloaded
+            _chapters.value =
+                chapterRepository.getChaptersForManga(mangaId).chapters.map { it.chapter }
         } catch (e: Exception) {
-            false
+            Timber.e("initChapters $e")
+            // TODO: add retry dialog
         }
     }
-
 
     private suspend fun areChaptersInDb(mangaId: String): Boolean {
         return try {
@@ -100,7 +103,13 @@ class TitleInfoViewModel @Inject constructor(
         }
     }
 
-    open class ViewModelState() {
+    sealed class ViewModelState {
+        sealed class DownloadingState : ViewModelState() {
+            object MangaIsSaving : DownloadingState()
+            object MangaSaved : DownloadingState()
+            object MangaSaveError : DownloadingState()
+        }
+
         object RequirePermissionsState : ViewModelState()
         object DefaultState : ViewModelState()
     }

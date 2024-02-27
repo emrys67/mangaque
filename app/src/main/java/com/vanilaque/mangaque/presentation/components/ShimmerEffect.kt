@@ -1,8 +1,20 @@
 package com.vanilaque.mangaque.presentation.components
 
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
@@ -12,11 +24,22 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import com.vanilaque.mangaque.theme.*
+import com.vanilaque.mangaque.theme.ABOUT_PLACEHOLDER_HEIGHT
+import com.vanilaque.mangaque.theme.EXTRA_SMALL_PADDING
+import com.vanilaque.mangaque.theme.HERO_ITEM_HEIGHT
+import com.vanilaque.mangaque.theme.MEDIUM_PADDING
+import com.vanilaque.mangaque.theme.MEDIUM_PLUS_PADDING
+import com.vanilaque.mangaque.theme.MangaPurple
+import com.vanilaque.mangaque.theme.NAME_PLACEHOLDER_HEIGHT
+import com.vanilaque.mangaque.theme.RATING_PLACEHOLDER_HEIGHT
+import com.vanilaque.mangaque.theme.SMALL_PADDING
+import com.vanilaque.mangaque.theme.ShimmerDarkGray
+import com.vanilaque.mangaque.theme.ShimmerLightGray
+import com.vanilaque.mangaque.theme.ShimmerMediumGray
 
 
 @Composable
-fun shimmerBrush(showShimmer: Boolean = true,targetValue:Float = 1000f): Brush {
+fun shimmerBrush(showShimmer: Boolean = true, targetValue: Float = 1000f): Brush {
     return if (showShimmer) {
         val shimmerColors = listOf(
             MangaPurple.copy(alpha = 0.6f),
@@ -39,7 +62,7 @@ fun shimmerBrush(showShimmer: Boolean = true,targetValue:Float = 1000f): Brush {
         )
     } else {
         Brush.linearGradient(
-            colors = listOf(Color.Transparent,Color.Transparent),
+            colors = listOf(Color.Transparent, Color.Transparent),
             start = Offset.Zero,
             end = Offset.Zero
         )
@@ -71,7 +94,7 @@ fun ShimmerItem(alpha: Float) {
             .height(HERO_ITEM_HEIGHT),
         color = if (isSystemInDarkTheme())
             Color.Black else ShimmerLightGray,
-        shape = RoundedCornerShape(size = LARGE_PADDING)
+        shape = RoundedCornerShape(size = MEDIUM_PLUS_PADDING)
     ) {
         Column(
             modifier = Modifier
@@ -101,7 +124,7 @@ fun ShimmerItem(alpha: Float) {
                 Spacer(modifier = Modifier.padding(all = EXTRA_SMALL_PADDING))
             }
             Row(modifier = Modifier.fillMaxWidth()) {
-                repeat(5){
+                repeat(5) {
                     Surface(
                         modifier = Modifier
                             .alpha(alpha = alpha)

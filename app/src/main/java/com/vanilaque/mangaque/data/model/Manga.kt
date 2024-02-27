@@ -22,6 +22,7 @@ data class Manga(
     val createdAt: Long?,
     val updatedAt: Long?,
     var lastChapterRead: Int = 0,
+    var chaptersDownloaded: Int = 0,
     var lastOpenedAt: Long? = null,
     var addedToFavoritesAt: Long? = null,
     var isInFavorites: Boolean = false,

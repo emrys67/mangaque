@@ -1,7 +1,6 @@
 package com.vanilaque.mangaque.data.repository.local
 
 import androidx.paging.PagingData
-import androidx.paging.PagingSource
 import com.vanilaque.mangaque.data.model.Manga
 import com.vanilaque.mangaque.data.model.MangaWithChapters
 import kotlinx.coroutines.flow.Flow
@@ -15,7 +14,11 @@ interface LocalMangaRepository {
 
     suspend fun getAll(): List<Manga>
 
-    fun getAllDataPaged(): Flow<PagingData<Manga>>
+    fun getAllFavoritePaged(): Flow<PagingData<Manga>>
+
+    fun getAllSavedPaged(): Flow<PagingData<Manga>>
+
+    fun getAllPaged(): Flow<PagingData<Manga>>
 
     suspend fun get(id: String): Manga
 
