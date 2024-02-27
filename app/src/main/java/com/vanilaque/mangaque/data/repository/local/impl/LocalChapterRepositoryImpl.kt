@@ -1,4 +1,4 @@
-package com.vanilaque.mangareader.data.repository.local.impl
+package com.vanilaque.mangaque.data.repository.local.impl
 
 import com.vanilaque.mangaque.data.db.MangaQueDatabase
 import com.vanilaque.mangaque.data.model.Chapter
@@ -21,6 +21,10 @@ class LocalChapterRepositoryImpl(database: MangaQueDatabase) : LocalChapterRepos
 
     override suspend fun get(id: String): Chapter {
         return dao.get(id)
+    }
+
+    override suspend fun getByIndex(index: Int, mangaId: String): Chapter {
+        return dao.getByOrder(index, mangaId)
     }
 
     override suspend fun clear() {

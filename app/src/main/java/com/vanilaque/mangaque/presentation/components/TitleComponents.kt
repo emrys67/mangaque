@@ -1,10 +1,14 @@
 package com.vanilaque.mangaque.presentation.components
 
-import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -19,6 +23,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.vanilaque.mangaque.R
+import com.vanilaque.mangaque.theme.EXTRA_SMALL_PADDING
 import com.vanilaque.mangaque.theme.FieldColor
 import com.vanilaque.mangaque.theme.LikeColor
 import com.vanilaque.mangaque.theme.LikeColorChosen
@@ -44,7 +49,7 @@ fun LikeField(
             painter = painterResource(id = R.drawable.like),
             contentDescription = "like",
             modifier = Modifier
-                .padding(end = 4.dp)
+                .padding(end = EXTRA_SMALL_PADDING)
                 .align(
                     Alignment.CenterEnd
                 )
@@ -56,7 +61,7 @@ fun LikeField(
 }
 
 @Composable
-fun TitleImage(url: String = "https://www.asurascans.com/wp-content/uploads/2021/03/soloLevelingCover02.png") {
+fun TitleImage(url: String) {
     val showShimmer = remember { mutableStateOf(true) }
     AsyncImage(
         model = url,
@@ -71,9 +76,4 @@ fun TitleImage(url: String = "https://www.asurascans.com/wp-content/uploads/2021
         onSuccess = { showShimmer.value = false },
         contentScale = ContentScale.Crop
     )
-}
-
-@Composable
-fun TitleImageFromDb(bitmap: Bitmap) {
-    //Image(bitmap = bitmap, contentDescription = "cover image")
 }

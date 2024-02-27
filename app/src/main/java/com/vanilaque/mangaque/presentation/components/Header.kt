@@ -2,11 +2,23 @@ package com.vanilaque.mangaque.presentation.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.AppBarDefaults
+import androidx.compose.material.ContentAlpha
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
@@ -16,8 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -25,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vanilaque.mangaque.R
+import com.vanilaque.mangaque.theme.EXTRA_SMALL_PADDING
 
 @Composable
 fun Header(
@@ -47,7 +59,7 @@ fun Header(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(72.dp)
-                .padding(8.dp),
+                .padding(EXTRA_SMALL_PADDING),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = CenterVertically
         ) {
@@ -57,7 +69,7 @@ fun Header(
                 modifier = Modifier.size(48.dp)
             )
             Text(
-                text = "User name",
+                text = stringResource(R.string.username),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
                 textAlign = TextAlign.Start,
@@ -71,36 +83,7 @@ fun Header(
                     .clickable { onSearchButtonClicked() }
             )
         }
-    //avatar -> user name                           search icon
-    //when search clicked - open textfield and change icon location
 }
-
-//@Composable
-//fun SearchField() {
-//    var text by remember { mutableStateOf(TextFieldValue("")) }
-//
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .height(72.dp)
-//            .padding(16.dp),
-//        horizontalArrangement = Arrangement.spacedBy(8.dp)
-//    ) {
-//        Image(
-//            painter = painterResource(id = R.drawable.search),
-//            contentDescription = "Search",
-//            modifier = Modifier
-//                .size(32.dp)
-//                .align(CenterVertically)
-//        )
-//
-//        TextField(value = text, onValueChange = { newText ->
-//            text = newText
-//        }, modifier = Modifier
-//            .weight(1f)
-//            .align(CenterVertically), shape = RoundedCornerShape(8.dp))
-//    }
-//}
 
 @Composable
 @Preview
@@ -130,24 +113,17 @@ fun SearchWidget(
     ) {
         TextField(
             modifier = Modifier
-                .fillMaxWidth()
-                .semantics {
-                    contentDescription = "TextField"
-                },
+                .fillMaxWidth(),
             value = text,
             onValueChange = { onTextChange(it) },
             placeholder = {
                 Text(
                     modifier = Modifier
                         .alpha(alpha = ContentAlpha.medium),
-                    text = "Search here...",
+                    text = stringResource(R.string.search),
                     color = Color.White
                 )
             },
-//            textStyle = TextStyle(
-//                color = MaterialTheme.colors.topAppBarContentColor
-//            )
-//            ,
             singleLine = true,
             leadingIcon = {
                 IconButton(
@@ -164,10 +140,6 @@ fun SearchWidget(
             },
             trailingIcon = {
                 IconButton(
-                    modifier = Modifier
-                        .semantics {
-                            contentDescription = "CloseButton"
-                        },
                     onClick = {
                         if (text.isNotEmpty()) {
                             onTextChange("")

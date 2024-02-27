@@ -1,4 +1,4 @@
-package com.vanilaque.mangareader.data.repository
+package com.vanilaque.mangaque.data.repository
 
 import com.vanilaque.mangaque.data.model.Chapter
 import com.vanilaque.mangaque.data.model.MangaWithChapters
@@ -11,6 +11,8 @@ interface ChapterRepository {
     suspend fun getChaptersForManga(id: String): MangaWithChapters
 
     suspend fun get(id: String): Chapter
+
+    suspend fun getByIndex(index: Int, mangaId: String): Chapter
 
     suspend fun clear()
 
