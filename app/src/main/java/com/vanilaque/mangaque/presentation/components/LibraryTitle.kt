@@ -22,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vanilaque.mangaque.R
@@ -61,7 +62,9 @@ fun LibraryMangaTitle(
                     fontSize = 22.sp,
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth(),
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
 
                 if (manga.chaptersDownloaded > 0) {
@@ -179,7 +182,9 @@ fun SmallTitle(
             modifier = Modifier
                 .width(IMAGE_WIDTH_SMALL.dp)
                 .padding(top = MICRO_PADDING, start = MICRO_PADDING, end = MICRO_PADDING),
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }

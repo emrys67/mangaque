@@ -16,7 +16,6 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -127,7 +126,6 @@ fun TitleInfoScreen(navController: NavController, viewModel: TitleInfoViewModel 
                                     permissionsState.allPermissionsGranted
                                 )
                             }
-                            .align(Alignment.Bottom)
                             .padding(end = MEDIUM_PADDING)
                     )
                 }
@@ -178,12 +176,10 @@ fun TitleInfoScreen(navController: NavController, viewModel: TitleInfoViewModel 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 if (chosenBox == ChooseBox.DESCRIPTION) {
-                    Card(
+                    Column(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(EXTRA_SMALL_PADDING),
-                        shape = RoundedCornerShape(8.dp), backgroundColor = Color.White,
-                        elevation = 6.dp,
+                            .padding(EXTRA_SMALL_PADDING)
                     ) {
                         Text(
                             modifier = Modifier
