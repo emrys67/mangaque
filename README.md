@@ -1,15 +1,21 @@
 
 # Mangaque
 
-Application for reading manga. It can work in online and offline mode.
+This application is designed for reading manga and supports both online and offline modes.
 
+In online mode:
 
- In online mode application allow user to see the manga feed with live on updown scrolling updates. User can proceed to each fetched manga title and check main info / description / number of chapters and actually chapters content (manga images).
+- The application allows users to view a manga feed with live updates through up and down scrolling.
+- Users can access detailed information about each manga title, including the main info, description, number of chapters, and the content of the chapters (manga images).
+- Users can add items to their favorites by clicking the LIKE icon or download the entire manga by clicking the SAVE icon.
+The downloading process may take some time; it is recommended not to close the application or leave the download screen during this operation.
+- The application also tracks user history, such as the last opened chapter, the last downloaded chapter, the date of downloading, and adding to favorites.
+- Upon reopening the application, the feed will refresh, but only downloaded and saved manga items will be stored in the local database.
 
- User is allowed to add item to favorites, by clicking LIKE or to download full manga item by clicking on SAVE icon. Downloading process can take a time, it's recomended to not close an application during this operation and to not leave the screen with downloading process. Also user can there is some history tracking: last chapter opened/last downloaded chapter/date of downloading/adding to the favorite a.s.o.
- After application reopening all feed is refreshing, only downloaded and saved manga items are keeping store in local database.
+In offline mode:
 
- In offline mode in feed is only displaying downlaoded/added to favorite manga. Can be read only downloaded content.
+- The feed displays only the downloaded or favorite manga.
+- Users can read only the downloaded content.
  
 
 
