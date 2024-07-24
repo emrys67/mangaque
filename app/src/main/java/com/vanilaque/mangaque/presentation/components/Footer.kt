@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,7 +32,7 @@ fun Footer(onClick: (FooterPath) -> Unit = {}, footerPath: FooterPath) {
         modifier = Modifier
             .fillMaxWidth()
             .height(72.dp)
-            .background(color = Color.White)
+            .background(color = MaterialTheme.colors.surface)
             .padding(MEDIUM_PADDING)
             .clip(RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp))
             .pointerInput(Unit) {
@@ -79,8 +80,9 @@ fun Footer(onClick: (FooterPath) -> Unit = {}, footerPath: FooterPath) {
     }
 }
 
+@Composable
 fun getColorForFooterItem(footerPath: FooterPath, activeFooterPath: FooterPath) =
-    if (footerPath == activeFooterPath) MangaPurple else MangaPink
+    if (footerPath == activeFooterPath) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.primary
 
 enum class FooterPath {
     CATALOG,

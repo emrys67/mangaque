@@ -12,6 +12,7 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
@@ -45,7 +46,7 @@ fun MangaSaveInProgressDialog(
                 modifier = modifier
                     .padding(horizontal = MEDIUM_PADDING)
                     .fillMaxWidth(),
-                backgroundColor = Color.White,
+                backgroundColor = MaterialTheme.colors.background,
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Column(
@@ -59,7 +60,7 @@ fun MangaSaveInProgressDialog(
                     when (state) {
                         is TitleInfoViewModel.ViewModelState.DownloadingState.MangaIsSaving -> {
                             CircularProgressIndicator(
-                                color = MangaPurple,
+                                color = MaterialTheme.colors.primaryVariant,
                                 modifier = Modifier
                                     .size(64.dp)
                                     .align(CenterHorizontally)
@@ -75,7 +76,7 @@ fun MangaSaveInProgressDialog(
                                 text = stringResource(R.string.manga_downloading_warning),
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.Center,
-                                color = Color.Red
+                                color = MaterialTheme.colors.error
                             )
                         }
 
@@ -86,7 +87,7 @@ fun MangaSaveInProgressDialog(
                                 modifier = Modifier
                                     .size(64.dp)
                                     .align(CenterHorizontally),
-                                tint = MangaPurple
+                                tint = MaterialTheme.colors.primaryVariant
                             )
                             Spacer(modifier = Modifier.weight(1f))
                             Text(
@@ -99,7 +100,7 @@ fun MangaSaveInProgressDialog(
                                 onClick = { onClose() },
                                 style = TextStyle(
                                     fontSize = 20.sp,
-                                    color = Purple200
+                                    color = MaterialTheme.colors.primaryVariant
                                 ),
                                 modifier = Modifier.align(CenterHorizontally)
                             )
@@ -112,7 +113,7 @@ fun MangaSaveInProgressDialog(
                                 modifier = Modifier
                                     .size(64.dp)
                                     .align(CenterHorizontally),
-                                tint = MangaPurple
+                                tint = MaterialTheme.colors.primaryVariant
                             )
                             Spacer(modifier = Modifier.weight(1f))
                             Text(
@@ -125,7 +126,7 @@ fun MangaSaveInProgressDialog(
                                 onClick = { onClose() },
                                 style = TextStyle(
                                     fontSize = 20.sp,
-                                    color = Purple200
+                                    color = MaterialTheme.colors.primaryVariant
                                 ),
                                 modifier = Modifier.align(CenterHorizontally)
                             )

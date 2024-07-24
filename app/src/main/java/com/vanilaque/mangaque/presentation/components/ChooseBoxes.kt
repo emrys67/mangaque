@@ -1,5 +1,6 @@
 package com.vanilaque.mangaque.presentation.components
 
+import android.content.res.Resources.Theme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -8,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -42,12 +44,12 @@ fun HorizontalRadioGroup(
                     .height(boxSize.height.dp),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
-                    backgroundColor = if (isSelected) selectedColor else notSelectedColor,
+                    backgroundColor = if (isSelected) MaterialTheme.colors.primary else MaterialTheme.colors.primaryVariant,
                 ),
                 content = {
                     Text(
                         text = stringResource(id = option.resId),
-                        color = Color.White,
+                        color = MaterialTheme.colors.onBackground,
                         textAlign = TextAlign.Center,
                         letterSpacing = 0.sp,
                         fontWeight = FontWeight.Bold
